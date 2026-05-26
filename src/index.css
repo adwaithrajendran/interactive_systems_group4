@@ -16,9 +16,17 @@ body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--color-surface-950);
+  background-image: url('/plant_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: #e2e8f0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 ::-webkit-scrollbar {
