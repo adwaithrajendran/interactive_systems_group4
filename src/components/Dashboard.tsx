@@ -1,19 +1,20 @@
 import Sidebar from './Sidebar';
 import TopNavbar from './TopNavbar';
 import PlantCard from './PlantCard';
+import PlantsByLocation from './PlantsByLocation';
 import WateringReminders from './WateringReminders';
 import StatisticsCards from './StatisticsCards';
 import { plants, reminders, statistics, navItems } from '../data/mockData';
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-surface-950">
+    <div className="min-h-screen bg-transparent">
       <Sidebar items={navItems} />
 
       <div className="pl-16">
         <TopNavbar />
 
-        <main className="p-6">
+        <main className="p-6 bg-surface-950/60 min-h-screen">
           <div className="mb-6">
             <h1 className="text-xl font-bold text-gray-100">Dashboard</h1>
             <p className="text-sm text-gray-500 mt-1">Welcome back, Jamie! Your plants are looking good today.</p>
@@ -31,6 +32,9 @@ export default function Dashboard() {
                 {plants.map((plant) => (
                   <PlantCard key={plant.id} plant={plant} />
                 ))}
+              </div>
+              <div className="mt-6">
+                <PlantsByLocation plants={plants} />
               </div>
             </div>
 

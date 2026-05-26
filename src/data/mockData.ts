@@ -21,6 +21,16 @@ export const plants: Plant[] = [
   },
   {
     id: '2',
+    name: 'Fernie',
+    species: 'Boston Fern',
+    waterIntervalDays: 3,
+    lastWatered: '2026-05-23',
+    nextWatering: '2026-05-26',
+    health: 'healthy',
+    room: 'Living Room',
+  },
+  {
+    id: '3',
     name: 'Sylvester',
     species: 'Snake Plant',
     waterIntervalDays: 14,
@@ -30,7 +40,7 @@ export const plants: Plant[] = [
     room: 'Bedroom',
   },
   {
-    id: '3',
+    id: '4',
     name: 'Poppy',
     species: 'Golden Pothos',
     waterIntervalDays: 5,
@@ -40,7 +50,7 @@ export const plants: Plant[] = [
     room: 'Bathroom',
   },
   {
-    id: '4',
+    id: '5',
     name: 'Figgy',
     species: 'Fiddle Leaf Fig',
     waterIntervalDays: 7,
@@ -50,7 +60,7 @@ export const plants: Plant[] = [
     room: 'Office',
   },
   {
-    id: '5',
+    id: '6',
     name: 'Ziggy',
     species: 'ZZ Plant',
     waterIntervalDays: 21,
@@ -60,7 +70,7 @@ export const plants: Plant[] = [
     room: 'Hallway',
   },
   {
-    id: '6',
+    id: '7',
     name: 'Vera',
     species: 'Aloe Vera',
     waterIntervalDays: 14,
@@ -69,12 +79,22 @@ export const plants: Plant[] = [
     health: 'healthy',
     room: 'Kitchen',
   },
+  {
+    id: '8',
+    name: 'Sunny',
+    species: 'Sunflower',
+    waterIntervalDays: 3,
+    lastWatered: '2026-05-24',
+    nextWatering: '2026-05-27',
+    health: 'healthy',
+    room: 'Balcony',
+  },
 ];
 
 export const reminders: Reminder[] = [
   {
     id: 'r1',
-    plantId: '4',
+    plantId: '5',
     plantName: 'Figgy',
     species: 'Fiddle Leaf Fig',
     dueDate: '2026-05-25',
@@ -91,22 +111,38 @@ export const reminders: Reminder[] = [
   {
     id: 'r3',
     plantId: '2',
+    plantName: 'Fernie',
+    species: 'Boston Fern',
+    dueDate: '2026-05-26',
+    status: 'today',
+  },
+  {
+    id: 'r4',
+    plantId: '3',
     plantName: 'Sylvester',
     species: 'Snake Plant',
     dueDate: '2026-05-26',
     status: 'today',
   },
   {
-    id: 'r4',
-    plantId: '5',
+    id: 'r5',
+    plantId: '6',
     plantName: 'Ziggy',
     species: 'ZZ Plant',
     dueDate: '2026-05-26',
     status: 'today',
   },
   {
-    id: 'r5',
-    plantId: '3',
+    id: 'r6',
+    plantId: '8',
+    plantName: 'Sunny',
+    species: 'Sunflower',
+    dueDate: '2026-05-27',
+    status: 'upcoming',
+  },
+  {
+    id: 'r7',
+    plantId: '4',
     plantName: 'Poppy',
     species: 'Golden Pothos',
     dueDate: '2026-05-27',
@@ -115,8 +151,8 @@ export const reminders: Reminder[] = [
 ];
 
 export const statistics: Stat[] = [
-  { label: 'Total Plants', value: 6, icon: 'leaf', change: 2, suffix: 'new this month' },
+  { label: 'Total Plants', value: 8, icon: 'leaf', change: 1, suffix: 'new this month' },
   { label: 'Watered Today', value: 0, icon: 'droplet', change: -1, suffix: 'vs yesterday' },
-  { label: 'Healthy', value: 4, icon: 'check', change: 1, suffix: 'from last week' },
+  { label: 'Healthy', value: 6, icon: 'check', change: 1, suffix: 'from last week' },
   { label: 'Needs Attention', value: 2, icon: 'alert', change: 1, suffix: 'overdue plants' },
 ];
