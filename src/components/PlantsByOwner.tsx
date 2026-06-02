@@ -1,4 +1,4 @@
-// Plants grouped by their room
+// Plants grouped by their owner
 
 import PlantCard from './PlantCard';
 import type { Plant } from '../types';
@@ -8,27 +8,27 @@ interface Props {
   onWater: (plantId: string) => void;
 }
 
-export default function PlantsByLocation({ plants, onWater }: Props) {
+export default function PlantsByOwner({ plants, onWater }: Props) {
   const grouped = plants.reduce<Record<string, Plant[]>>((acc, plant) => {
-    if (!acc[plant.room]) acc[plant.room] = [];
-    acc[plant.room].push(plant);
+    if (!acc[plant.owner]) acc[plant.owner] = [];
+    acc[plant.owner].push(plant);
     return acc;
   }, {});
 
-  const sortedRooms = Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
+  const sortedOwners = Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
 
   return (
     <div>
-      {sortedRooms.map(([room, roomPlants]) => (
-        <div key={room} className="mb-5">
+      {sortedOwners.map(([owner, ownerPlants]) => (
+        <div key={owner} className="mb-5">
           <div className="flex items-center gap-2 mb-3">
             <h3 className="text-sm font-bold text-gray-200 uppercase tracking-wider">
-              {room}
+              {owner}'s plants
             </h3>
-            <span className="text-sm text-gray-400">({roomPlants.length})</span>
+            <span className="text-sm text-gray-400">({ownerPlants.length})</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {roomPlants.map(plant => (
+            {ownerPlants.map(plant => (
               <PlantCard key={plant.id} plant={plant} onWater={onWater} />
             ))}
           </div>

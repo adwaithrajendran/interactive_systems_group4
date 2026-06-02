@@ -1,3 +1,5 @@
+// Type definitions for the Sprout app
+
 export type HealthStatus = 'healthy' | 'warning' | 'critical';
 
 export interface Plant {
@@ -7,9 +9,9 @@ export interface Plant {
   waterIntervalDays: number;
   lastWatered: string;
   nextWatering: string;
-  health: HealthStatus;
   room: string;
-  imageUrl?: string;
+  owner: string;
+  health: HealthStatus;
 }
 
 export type ReminderStatus = 'overdue' | 'today' | 'upcoming';
@@ -21,14 +23,7 @@ export interface Reminder {
   dueDate: string;
   status: ReminderStatus;
   species: string;
-}
-
-export interface Stat {
-  label: string;
-  value: number;
-  icon: string;
-  change: number;
-  suffix?: string;
+  owner: string;
 }
 
 export interface NavItem {
@@ -37,3 +32,5 @@ export interface NavItem {
   href: string;
   active?: boolean;
 }
+
+export type SortMode = 'location' | 'name' | 'owner';
