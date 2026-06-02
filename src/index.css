@@ -42,3 +42,19 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #4b4f5c;
 }
+
+/* Slide-in animation for the toast notification */
+@keyframes slide-in {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.2s ease-out;
+}
