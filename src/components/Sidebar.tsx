@@ -1,5 +1,5 @@
 // Left side navigation bar
-// Stays expanded so labels are always visible
+// Sprout logo at the top is clickable and resets the dashboard to a clean state
 
 import type { NavItem } from '../types';
 
@@ -43,16 +43,21 @@ const iconPaths: Record<string, JSX.Element> = {
 
 interface SidebarProps {
   items: NavItem[];
+  onHomeClick: () => void;
 }
 
-export default function Sidebar({ items }: SidebarProps) {
+export default function Sidebar({ items, onHomeClick }: SidebarProps) {
   return (
     <aside className="fixed left-0 top-0 h-screen w-56 z-40 flex flex-col bg-surface-900 border-r border-surface-700">
-      {/* Sprout logo at the top */}
-      <div className="flex items-center justify-center h-16 border-b border-surface-700 shrink-0">
+      {/* Logo, clicking it returns to a clean dashboard view */}
+      <button
+        onClick={onHomeClick}
+        className="flex items-center justify-center h-16 border-b border-surface-700 shrink-0 hover:bg-surface-800/50 transition-colors"
+        title="Back to dashboard"
+      >
         <span className="text-emerald-400 font-bold text-2xl leading-none">S</span>
         <span className="ml-2 text-emerald-400 font-bold text-xl">prout</span>
-      </div>
+      </button>
 
       {/* Navigation items */}
       <nav className="flex-1 py-4 space-y-1 px-2">
@@ -63,7 +68,7 @@ export default function Sidebar({ items }: SidebarProps) {
             className={`flex items-center h-11 px-3 rounded-lg transition-colors duration-150
               ${item.active
                 ? 'bg-emerald-500/10 text-emerald-400'
-                : 'text-gray-400 hover:text-gray-200 hover:bg-surface-700'
+                : 'text-gray-300 hover:text-white hover:bg-surface-700'
               }`}
           >
             <span className="shrink-0">{iconPaths[item.icon]}</span>
