@@ -20,9 +20,9 @@ export default function Toast({ message, onUndo, onDismiss }: ToastProps) {
   }, [onDismiss]);
 
   return (
-    <div className="animate-slide-in flex items-center gap-3 bg-surface-800 border border-emerald-500/30 rounded-xl px-4 py-3 shadow-2xl min-w-[280px]">
+    <div className="animate-slide-in flex items-center gap-3 bg-surface-800 border border-emerald-600/30 rounded-xl px-4 py-3 shadow-2xl min-w-[280px]">
       {/* Success icon */}
-      <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+      <div className="w-8 h-8 rounded-full bg-emerald-600/20 flex items-center justify-center shrink-0">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -33,7 +33,7 @@ export default function Toast({ message, onUndo, onDismiss }: ToastProps) {
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-emerald-400"
+          className="text-emerald-500"
         >
           <polyline points="20 6 9 17 4 12" />
         </svg>
@@ -48,7 +48,7 @@ export default function Toast({ message, onUndo, onDismiss }: ToastProps) {
       {/* Undo button */}
       <button
         onClick={onUndo}
-        className="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs font-semibold transition-colors shrink-0"
+        className="px-3 py-1.5 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 text-xs font-semibold transition-colors shrink-0"
       >
         Undo
       </button>

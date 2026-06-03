@@ -67,7 +67,7 @@ export default function WaterTodayPanel({ reminders, onWater }: WaterTodayPanelP
 
                 <button
                   onClick={() => onWater(reminder.plantId)}
-                  className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-colors shrink-0"
+                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors shrink-0"
                 >
                   Water
                 </button>
@@ -80,7 +80,7 @@ export default function WaterTodayPanel({ reminders, onWater }: WaterTodayPanelP
         {hiddenCount > 0 && (
           <button
             onClick={() => setModalOpen(true)}
-            className="mt-3 w-full py-2.5 rounded-lg bg-surface-700/40 hover:bg-surface-700/80 text-emerald-300 hover:text-emerald-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+            className="mt-3 w-full py-2.5 rounded-lg bg-surface-700/40 hover:bg-surface-700/80 text-emerald-400 hover:text-emerald-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
           >
             View all {reminders.length} plants
             <svg

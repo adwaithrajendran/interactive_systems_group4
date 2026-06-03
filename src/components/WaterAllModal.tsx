@@ -90,7 +90,7 @@ export default function WaterAllModal({ reminders, onWater, onClose }: WaterAllM
 
                 <button
                   onClick={() => onWater(reminder.plantId)}
-                  className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-colors shrink-0"
+                  className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors shrink-0"
                 >
                   Water
                 </button>

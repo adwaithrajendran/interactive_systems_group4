@@ -55,8 +55,8 @@ export default function Sidebar({ items, onHomeClick }: SidebarProps) {
         className="flex items-center justify-center h-16 border-b border-surface-700 shrink-0 hover:bg-surface-800/50 transition-colors"
         title="Back to dashboard"
       >
-        <span className="text-emerald-400 font-bold text-2xl leading-none">S</span>
-        <span className="ml-1 text-emerald-400 font-bold text-xl">prout</span>
+        <span className="text-emerald-500 font-bold text-2xl leading-none">S</span>
+        <span className="ml-1 text-emerald-500 font-bold text-xl">prout</span>
       </button>
 
       {/* Navigation items with icon and label */}
@@ -67,7 +67,7 @@ export default function Sidebar({ items, onHomeClick }: SidebarProps) {
             href={item.href}
             className={`flex items-center h-11 px-3 rounded-lg transition-colors duration-150
               ${item.active
-                ? 'bg-emerald-500/10 text-emerald-400'
+                ? 'bg-emerald-600/10 text-emerald-500'
                 : 'text-gray-300 hover:text-white hover:bg-surface-700'
               }`}
           >

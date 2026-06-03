@@ -107,7 +107,7 @@ export default function NotificationPanel({
                   {/* Quick Water button */}
                   <button
                     onClick={() => onWater(reminder.plantId)}
-                    className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold transition-colors shrink-0"
+                    className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors shrink-0"
                   >
                     Water
                   </button>

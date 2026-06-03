@@ -120,7 +120,7 @@ export default function Dashboard({ plants, onWater }: DashboardProps) {
 
                 {/* Add Plant action button */}
                 <div className="flex items-center gap-3">
-                  <button className="px-5 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-base font-semibold transition-colors flex items-center gap-2">
+                  <button className="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-base font-semibold transition-colors flex items-center gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -148,7 +148,7 @@ export default function Dashboard({ plants, onWater }: DashboardProps) {
                 <button
                   onClick={() => setOwnerFilter(null)}
                   className={`flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full text-sm font-medium transition-colors ${ownerFilter === null
-                      ? 'bg-emerald-500 text-white'
+                      ? 'bg-emerald-600 text-white'
                       : 'bg-surface-800 text-gray-200 hover:text-white hover:bg-surface-700 border border-surface-700'
                     }`}
                 >
@@ -193,7 +193,7 @@ export default function Dashboard({ plants, onWater }: DashboardProps) {
                       key={owner}
                       onClick={() => setOwnerFilter(owner)}
                       className={`flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full text-sm font-medium transition-colors ${isActive
-                          ? 'bg-emerald-500 text-white'
+                          ? 'bg-emerald-600 text-white'
                           : 'bg-surface-800 text-gray-200 hover:text-white hover:bg-surface-700 border border-surface-700'
                         }`}
                     >
@@ -328,7 +328,7 @@ function SortButton({
     <button
       onClick={onClick}
       className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${active
-          ? 'bg-emerald-500 text-white'
+          ? 'bg-emerald-600 text-white'
           : 'bg-surface-800 text-gray-200 hover:text-white border border-surface-700'
         }`}
     >
