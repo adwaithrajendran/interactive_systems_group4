@@ -1,50 +1,46 @@
-# React + TypeScript + Vite
+# Sprout — Plant Care Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A reactive plant care dashboard for the Adelaide University Interactive Systems Design course (Assignment 2, Group 4).
 
-Currently, two official plugins are available:
+Sprout tracks watering schedules for a shared household. Multiple housemates can manage their plants from a single dashboard without needing accounts.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Setup
 
-## Expanding the ESLint configuration
+Requires Node.js 18 or newer.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Open the URL shown in the terminal (usually `http://localhost:5173`).
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## What to try
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- **Water a plant** from any card or the Water Today panel. Counts update instantly, toast appears with Undo.
+- **Search** by name, species, or room in the top bar.
+- **Filter by owner** using the chips (Everyone, Sam, Priya, Alex).
+- **Sort** the plants section by Location, Name, or Owner.
+- **Click the bell** top-right for notifications and quick watering.
+- **Re-water a healthy plant** to see the confirmation dialog.
+
+## Tech stack
+
+React 18 + TypeScript + Vite + Tailwind CSS v4.
+
+## Structure
+
+- `src/App.tsx` — top-level state and watering logic
+- `src/components/` — UI components
+- `src/data/mockData.ts` — initial plant data
+- `src/types/` — shared TypeScript types
+- `src/utils/plantStatus.ts` — status helper functions
+
+## Scope
+
+Per the assignment brief, this is a single-screen prototype. Other screens shown in the wireframes (Add Plant, Plant Detail) are intentionally not implemented.
+
+## Team
+Agrim Sharma (A1913864)
+Rajesh
+Adwaith

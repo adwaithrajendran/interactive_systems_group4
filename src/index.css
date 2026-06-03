@@ -6,29 +6,33 @@
   --color-surface-800: #1a1d24;
   --color-surface-700: #252830;
   --color-surface-600: #31343e;
-  --color-accent: #10b981;
-  --color-accent-hover: #059669;
+  --color-accent: #059669;         
+  --color-accent-hover: #047857;  
   --color-amber: #f59e0b;
   --color-rose: #f43f5e;
 }
 
+/* Base page styling */
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--color-surface-950);
-  background-image: url('/plant_bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: radial-gradient(
+    ellipse at top left,
+    #0a0f1a 0%,
+    #030712 60%,
+    #000000 100%
+  );
   color: #e2e8f0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
 #root {
   min-height: 100vh;
 }
 
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -41,4 +45,20 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #4b4f5c;
+}
+
+/* Slide-in animation used by toast notifications */
+@keyframes slide-in {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.2s ease-out;
 }

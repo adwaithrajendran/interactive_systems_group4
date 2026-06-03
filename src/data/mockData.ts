@@ -1,11 +1,12 @@
-// Mock plant data for the shared household
-// Sam, Priya and Alex live together and each own some plants
+// Mock data for the Sprout app
+// Plants are owned by Sam, Priya, or Alex in a shared household
 
 import type { Plant, NavItem } from '../types';
 
+// Sidebar navigation items
 export const navItems: NavItem[] = [
   { label: 'Dashboard', icon: 'grid', href: '#', active: true },
-  { label: 'My Plants', icon: 'leaf', href: '#' },
+  { label: 'All Plants', icon: 'leaf', href: '#' },
   { label: 'Schedule', icon: 'calendar', href: '#' },
   { label: 'Statistics', icon: 'bar-chart', href: '#' },
   { label: 'Settings', icon: 'settings', href: '#' },
@@ -18,8 +19,8 @@ function daysFromNow(days: number): string {
   return d.toISOString().split('T')[0];
 }
 
-// Initial plant data. The health field here sets the starting state.
-// It only changes when a user clicks the Water button.
+// Initial plant data
+// The health field sets the starting state and only changes when a user clicks Water
 export const plants: Plant[] = [
   {
     id: '1',

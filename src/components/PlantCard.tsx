@@ -4,7 +4,7 @@ import type { Plant, HealthStatus } from '../types';
 import { dueLabel } from '../utils/plantStatus';
 
 const statusPill: Record<HealthStatus, { bg: string; text: string; label: string }> = {
-  healthy: { bg: 'bg-emerald-500', text: 'text-white', label: 'Ok' },
+  healthy: { bg: 'bg-emerald-600', text: 'text-white', label: 'Ok' },
   warning: { bg: 'bg-amber-400', text: 'text-white', label: 'Due Soon' },
   critical: { bg: 'bg-rose-500', text: 'text-white', label: 'Overdue' },
 };
@@ -18,7 +18,7 @@ export default function PlantCard({ plant, onWater }: PlantCardProps) {
   const pill = statusPill[plant.health];
 
   return (
-    <div className="bg-surface-800 border border-surface-700 rounded-lg p-4 hover:border-emerald-500/40 transition-colors">
+    <div className="bg-surface-800 border border-surface-700 rounded-lg p-4 hover:border-emerald-600/40 transition-colors">
       {/* Top row: avatar, plant info, status pill */}
       <div className="flex items-center gap-3 mb-3">
         <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-base font-bold text-emerald-700 shrink-0">
@@ -46,7 +46,7 @@ export default function PlantCard({ plant, onWater }: PlantCardProps) {
       {/* Full width Water button */}
       <button
         onClick={() => onWater(plant.id)}
-        className="w-full py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 hover:text-emerald-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+        className="w-full py-2 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 hover:text-emerald-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
