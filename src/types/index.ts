@@ -33,4 +33,13 @@ export interface NavItem {
   active?: boolean;
 }
 
+export interface PlantFormData {
+  name: string;
+  species: string;
+  location: string;
+  room: string;
+  owner: string;
+  waterFrequency: number;
+}
+
 export type SortMode = 'location' | 'name' | 'owner';

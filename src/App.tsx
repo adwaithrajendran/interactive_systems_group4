@@ -6,7 +6,8 @@ import Dashboard from './components/Dashboard';
 import ToastStack from './components/ToastStack';
 import ConfirmDialog from './components/ConfirmDialog';
 import { plants as initialPlants } from './data/mockData';
-import type { Plant } from './types';
+import type {Plant, PlantFormData} from './types';
+import AddPlant from './components/AddPlant';
 
 // Shape of a single toast in the stack
 interface ToastItem {
@@ -26,6 +27,7 @@ const MAX_TOASTS = 4;
 
 function App() {
   const [plants, setPlants] = useState<Plant[]>(initialPlants);
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'addPlant'>('dashboard');
 
   // Stack of toasts, newest at the end
   const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -144,9 +146,37 @@ function App() {
     if (snapshot) pushToast(plant.name, snapshot);
   };
 
+  const addPlant = (formData: PlantFormData) => {
+  const today = new Date();
+  const next = new Date(today);
+  next.setDate(next.getDate() + formData.waterFrequency);
+
+  const newPlant: Plant = {
+    ...formData,
+    id: crypto.randomUUID(),
+    health: 'healthy',
+    lastWatered: today.toISOString().split('T')[0],
+    nextWatering: next.toISOString().split('T')[0],
+    waterIntervalDays: formData.waterFrequency,
+  };
+
+  setPlants(prev => [...prev, newPlant]);
+  setCurrentPage('dashboard');
+};
+
+if (currentPage === 'addPlant') {
+  return (
+    <AddPlant
+      owners={Array.from(new Set(plants.map(p => p.owner))).sort()}
+      onAdd={addPlant}
+      onCancel={() => setCurrentPage('dashboard')}
+    />
+  );
+}
+
   return (
     <>
-      <Dashboard plants={plants} onWater={logWatering} />
+      <Dashboard plants={plants} onWater={logWatering} onAddPlant={() => setCurrentPage('addPlant')} />
 
       {/* Toast stack in the bottom right */}
       <ToastStack toasts={toasts} onDismiss={removeToast} />

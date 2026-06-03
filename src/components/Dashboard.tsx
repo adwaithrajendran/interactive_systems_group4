@@ -17,9 +17,10 @@ import type { Plant, Reminder, SortMode } from '../types';
 interface DashboardProps {
   plants: Plant[];
   onWater: (plantId: string) => void;
+  onAddPlant:() => void;
 }
 
-export default function Dashboard({ plants, onWater }: DashboardProps) {
+export default function Dashboard({ plants, onWater, onAddPlant}: DashboardProps) {
   // Sort mode for the plants section
   const [sortMode, setSortMode] = useState<SortMode>('location');
 
@@ -117,28 +118,20 @@ export default function Dashboard({ plants, onWater }: DashboardProps) {
                       : 'All plants are looking good today.'}
                   </p>
                 </div>
-
-                {/* Add Plant action button */}
+                
                 <div className="flex items-center gap-3">
-                  <button className="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-base font-semibold transition-colors flex items-center gap-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
+                  <button
+                    onClick={onAddPlant}
+                    className="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-base font-semibold transition-colors flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="12" y1="5" x2="12" y2="19" />
                       <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
                     Add Plant
                   </button>
-                </div>
               </div>
+            </div>
 
               {/* Enhanced owner filter with avatars and counts */}
               <div className="flex flex-wrap items-center gap-3">
