@@ -41,10 +41,15 @@ export default function AddPlant({ owners, onAdd, onCancel }: AddPlantProps) {
  
   return (
     <div className="min-h-screen bg-transparent">
-      <Sidebar items={navItems} />
+      <Sidebar items={navItems} onHomeClick={() => {}} />
  
       <div className="pl-56">
-        <TopNavbar searchQuery="" onSearchChange={() => {}} />
+        <TopNavbar 
+            searchQuery="" 
+            onSearchChange={() => {}}
+            reminders={[]}
+            onWater={() => {}}
+            />
  
         <main className="p-6 bg-surface-950/60 min-h-screen">
  
@@ -54,7 +59,7 @@ export default function AddPlant({ owners, onAdd, onCancel }: AddPlantProps) {
           </section>
  
           {/* Form */}
-          <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-8 max-auto">
+          <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-8 mx-auto">
  
             {/* Plant Name */}
             <div className="mb-5">
@@ -115,13 +120,13 @@ export default function AddPlant({ owners, onAdd, onCancel }: AddPlantProps) {
  
             {/* Water Frequency */}
             <div className="mb-6">
-              <label className="block text-white font-semibold mb-3">Water Frequency</label>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="bg-surface-800 border border-surface-700 rounded-lg w-12 h-9 flex items-center justify-center text-white font-semibold text-sm">
-                  {waterFrequency}
+                <label className="block text-white font-semibold mb-3">Water Frequency</label>
+                <div className="flex items-center gap-3 mb-2">
+                    <div className="bg-surface-800 border border-surface-700 rounded-lg w-12 h-9 flex items-center justify-center text-white font-semibold text-sm">
+                    {waterFrequency}
+                    </div>
+                    <span className="text-white font-semibold text-sm">days between waterings</span>
                 </div>
-                <span className="text-white font-semibold text-sm">days between waterings</span>
-              </div>
               <input
                 type="range"
                 min={1}
