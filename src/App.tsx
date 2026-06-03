@@ -1,36 +1,42 @@
 // Top level app component
-// Owns the plant data, the toast notification state, and the confirmation flow
+// Owns plant data, the toast stack, and the confirmation flow
 
 import { useState } from 'react';
 import Dashboard from './components/Dashboard';
-import Toast from './components/Toast';
+import ToastStack from './components/ToastStack';
 import ConfirmDialog from './components/ConfirmDialog';
 import { plants as initialPlants } from './data/mockData';
 import type { Plant } from './types';
 
-// Shape of a snapshot used to undo a watering
+// Shape of a single toast in the stack
+interface ToastItem {
+  id: string;
+  message: string;
+  onUndo: () => void;
+}
+
+// Snapshot used to undo a watering
 interface WateringSnapshot {
   plantId: string;
   previousState: Pick<Plant, 'lastWatered' | 'nextWatering' | 'health'>;
 }
 
+// Maximum number of toasts shown at once
+const MAX_TOASTS = 4;
+
 function App() {
   const [plants, setPlants] = useState<Plant[]>(initialPlants);
 
-  // Toast notification state, null means no toast is showing
-  const [toast, setToast] = useState<{
-    message: string;
-    onUndo: () => void;
-  } | null>(null);
+  // Stack of toasts, newest at the end
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-  // Confirmation dialog state, null means no dialog is showing
+  // Confirmation dialog state
   const [confirm, setConfirm] = useState<{
     plantName: string;
     onConfirm: () => void;
   } | null>(null);
 
   // Check whether a plant was watered very recently
-  // This is the trigger for the re-water confirmation
   const wateredRecently = (plant: Plant): boolean => {
     const now = new Date();
     const last = new Date(plant.lastWatered);
@@ -38,7 +44,7 @@ function App() {
     return plant.health === 'healthy' && hoursSince < 24;
   };
 
-  // Actually log the watering, no checks
+  // Perform the actual state update for a watering
   // Returns a snapshot so the action can be undone
   const performWatering = (plantId: string): WateringSnapshot | null => {
     const plant = plants.find(p => p.id === plantId);
@@ -74,7 +80,7 @@ function App() {
     return snapshot;
   };
 
-  // Restore a plant to its previous state, used for undo
+  // Restore a plant to a previous state, used for undo
   const undoWatering = (snapshot: WateringSnapshot) => {
     setPlants(currentPlants =>
       currentPlants.map(p =>
@@ -88,31 +94,46 @@ function App() {
     );
   };
 
-  // Show a toast notification for a watering action
-  const showWateringToast = (plantName: string, snapshot: WateringSnapshot) => {
-    setToast({
+  // Add a toast to the stack, removing the oldest if we hit the cap
+  const pushToast = (plantName: string, snapshot: WateringSnapshot) => {
+    const id = `toast-${Date.now()}-${Math.random()}`;
+    const newToast: ToastItem = {
+      id,
       message: `Watered ${plantName}`,
       onUndo: () => {
         undoWatering(snapshot);
-        setToast(null);
+        removeToast(id);
       },
+    };
+
+    setToasts(current => {
+      const next = [...current, newToast];
+      // Drop oldest if we exceed the cap
+      if (next.length > MAX_TOASTS) {
+        return next.slice(next.length - MAX_TOASTS);
+      }
+      return next;
     });
   };
 
+  // Remove a specific toast from the stack
+  const removeToast = (id: string) => {
+    setToasts(current => current.filter(t => t.id !== id));
+  };
+
   // Main entry point called by any Water button in the UI
-  // Decides whether to ask for confirmation or just go ahead
   const logWatering = (plantId: string) => {
     const plant = plants.find(p => p.id === plantId);
     if (!plant) return;
 
-    // Healthy plant watered recently, ask for confirmation
+    // If the plant is healthy and was just watered, ask first
     if (wateredRecently(plant)) {
       setConfirm({
         plantName: plant.name,
         onConfirm: () => {
           const snapshot = performWatering(plantId);
           setConfirm(null);
-          if (snapshot) showWateringToast(plant.name, snapshot);
+          if (snapshot) pushToast(plant.name, snapshot);
         },
       });
       return;
@@ -120,23 +141,17 @@ function App() {
 
     // Otherwise water immediately
     const snapshot = performWatering(plantId);
-    if (snapshot) showWateringToast(plant.name, snapshot);
+    if (snapshot) pushToast(plant.name, snapshot);
   };
 
   return (
     <>
       <Dashboard plants={plants} onWater={logWatering} />
 
-      {/* Toast appears bottom right when present */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          onUndo={toast.onUndo}
-          onDismiss={() => setToast(null)}
-        />
-      )}
+      {/* Toast stack in the bottom right */}
+      <ToastStack toasts={toasts} onDismiss={removeToast} />
 
-      {/* Confirmation dialog appears centered when present */}
+      {/* Confirmation dialog */}
       {confirm && (
         <ConfirmDialog
           plantName={confirm.plantName}

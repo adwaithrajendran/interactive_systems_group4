@@ -1,5 +1,5 @@
 // Left side navigation bar
-// Sprout logo at the top is clickable and resets the dashboard to a clean state
+// Always expanded so labels are visible alongside icons
 
 import type { NavItem } from '../types';
 
@@ -48,18 +48,18 @@ interface SidebarProps {
 
 export default function Sidebar({ items, onHomeClick }: SidebarProps) {
   return (
-    <aside className="fixed left-0 top-0 h-screen w-56 z-40 flex flex-col bg-surface-900 border-r border-surface-700">
-      {/* Logo, clicking it returns to a clean dashboard view */}
+    <aside className="fixed left-0 top-0 h-screen w-52 z-40 flex flex-col bg-surface-900 border-r border-surface-700">
+      {/* Logo, clicking returns to a clean dashboard state */}
       <button
         onClick={onHomeClick}
         className="flex items-center justify-center h-16 border-b border-surface-700 shrink-0 hover:bg-surface-800/50 transition-colors"
         title="Back to dashboard"
       >
         <span className="text-emerald-400 font-bold text-2xl leading-none">S</span>
-        <span className="ml-2 text-emerald-400 font-bold text-xl">prout</span>
+        <span className="ml-1 text-emerald-400 font-bold text-xl">prout</span>
       </button>
 
-      {/* Navigation items */}
+      {/* Navigation items with icon and label */}
       <nav className="flex-1 py-4 space-y-1 px-2">
         {items.map(item => (
           <a

@@ -12,23 +12,27 @@
   --color-rose: #f43f5e;
 }
 
+/* Base page styling */
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--color-surface-950);
-  background-image: url('/plant_bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: radial-gradient(
+    ellipse at top left,
+    #0a0f1a 0%,
+    #030712 60%,
+    #000000 100%
+  );
   color: #e2e8f0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
 #root {
   min-height: 100vh;
 }
 
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -43,7 +47,7 @@ body {
   background: #4b4f5c;
 }
 
-/* Slide-in animation for the toast notification */
+/* Slide-in animation used by toast notifications */
 @keyframes slide-in {
   from {
     transform: translateX(20px);

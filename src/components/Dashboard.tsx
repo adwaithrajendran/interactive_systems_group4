@@ -94,7 +94,7 @@ export default function Dashboard({ plants, onWater }: DashboardProps) {
     <div className="min-h-screen bg-transparent">
       <Sidebar items={navItems} onHomeClick={resetDashboard} />
 
-      <div className="pl-56">
+      <div className="pl-52">
         <TopNavbar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -102,10 +102,10 @@ export default function Dashboard({ plants, onWater }: DashboardProps) {
           onWater={onWater}
         />
 
-        <main className="p-6 bg-surface-950/60 min-h-screen space-y-6">
+        <main className="p-5 bg-surface-950/60 min-h-screen space-y-4">
           {/* HEADER CARD: hidden entirely during search */}
           {!isSearching && (
-            <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-7">
+            <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-5">
               <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
                 <div>
                   <h1 className="text-4xl font-bold text-white">
@@ -140,32 +140,80 @@ export default function Dashboard({ plants, onWater }: DashboardProps) {
                 </div>
               </div>
 
-              {/* Owner filter chips */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-gray-300 mr-2 font-medium">Filter by owner:</span>
+              {/* Enhanced owner filter with avatars and counts */}
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-sm text-gray-300 font-medium">Whose plants:</span>
+
+                {/* Everyone chip */}
                 <button
                   onClick={() => setOwnerFilter(null)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    ownerFilter === null
+                  className={`flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full text-sm font-medium transition-colors ${ownerFilter === null
                       ? 'bg-emerald-500 text-white'
                       : 'bg-surface-800 text-gray-200 hover:text-white hover:bg-surface-700 border border-surface-700'
-                  }`}
-                >
-                  Everyone
-                </button>
-                {owners.map(owner => (
-                  <button
-                    key={owner}
-                    onClick={() => setOwnerFilter(owner)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      ownerFilter === owner
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-surface-800 text-gray-200 hover:text-white hover:bg-surface-700 border border-surface-700'
                     }`}
+                >
+                  {/* Group icon for Everyone */}
+                  <span
+                    className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${ownerFilter === null ? 'bg-white/20' : 'bg-surface-600'
+                      }`}
                   >
-                    {owner}
-                  </button>
-                ))}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </span>
+                  <span>Everyone</span>
+                  <span
+                    className={`text-xs font-semibold ${ownerFilter === null ? 'text-white/80' : 'text-gray-400'
+                      }`}
+                  >
+                    {plants.length}
+                  </span>
+                </button>
+
+                {/* One chip per owner */}
+                {owners.map(owner => {
+                  const ownerCount = plants.filter(p => p.owner === owner).length;
+                  const isActive = ownerFilter === owner;
+
+                  return (
+                    <button
+                      key={owner}
+                      onClick={() => setOwnerFilter(owner)}
+                      className={`flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full text-sm font-medium transition-colors ${isActive
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-surface-800 text-gray-200 hover:text-white hover:bg-surface-700 border border-surface-700'
+                        }`}
+                    >
+                      {/* Initial avatar matches the badge style used on plant cards */}
+                      <span
+                        className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${isActive ? 'bg-white text-emerald-700' : 'bg-surface-600 text-gray-100'
+                          }`}
+                      >
+                        {owner.charAt(0)}
+                      </span>
+                      <span>{owner}</span>
+                      <span
+                        className={`text-xs font-semibold ${isActive ? 'text-white/80' : 'text-gray-400'
+                          }`}
+                      >
+                        {ownerCount}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </section>
           )}
@@ -193,7 +241,7 @@ export default function Dashboard({ plants, onWater }: DashboardProps) {
 
           {/* SUMMARY CARD: hidden during search */}
           {!isSearching && (
-            <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-7">
+            <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-5">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                 <div className="space-y-3">
                   <MetricCard label="Needs Water" value={needsWaterCount} accent="critical" />
@@ -207,7 +255,7 @@ export default function Dashboard({ plants, onWater }: DashboardProps) {
           )}
 
           {/* PLANTS CARD: always visible, this is the focus during search */}
-          <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-7">
+          <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-5">
             <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
               <h2 className="text-2xl font-bold text-white">
                 {isSearching ? 'Search Results' : 'Your Plants'}
@@ -279,11 +327,10 @@ function SortButton({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-        active
+      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${active
           ? 'bg-emerald-500 text-white'
           : 'bg-surface-800 text-gray-200 hover:text-white border border-surface-700'
-      }`}
+        }`}
     >
       {label}
     </button>
