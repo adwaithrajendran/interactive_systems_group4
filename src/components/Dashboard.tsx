@@ -16,9 +16,10 @@ import type { Plant, Reminder, SortMode } from '../types';
 interface DashboardProps {
   plants: Plant[];
   onWater: (plantId: string) => void;
+  onAddPlant:() => void;
 }
 
-export default function Dashboard({ plants, onWater }: DashboardProps) {
+export default function Dashboard({ plants, onWater, onAddPlant}: DashboardProps) {
   // Sort mode for the plants section
   const [sortMode, setSortMode] = useState<SortMode>('location');
 
@@ -92,7 +93,7 @@ export default function Dashboard({ plants, onWater }: DashboardProps) {
                 <button className="px-5 py-2.5 rounded-lg bg-surface-800 hover:bg-surface-700 border border-surface-700 text-gray-100 text-base font-medium transition-colors">
                   All Plants
                 </button>
-                <button className="px-5 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-base font-semibold transition-colors flex items-center gap-2">
+                <button onClick={onAddPlant} className="px-5 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-base font-semibold transition-colors flex items-center gap-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
