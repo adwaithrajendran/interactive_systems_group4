@@ -3,6 +3,8 @@
 
 import { useState } from 'react';
 import Dashboard from './components/Dashboard';
+import AllPlants from './components/AllPlants';
+import PlantDetails from './components/PlantDetails';
 import ToastStack from './components/ToastStack';
 import ConfirmDialog from './components/ConfirmDialog';
 import { plants as initialPlants } from './data/mockData';
@@ -27,7 +29,9 @@ const MAX_TOASTS = 4;
 
 function App() {
   const [plants, setPlants] = useState<Plant[]>(initialPlants);
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'addPlant'>('dashboard');
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'addPlant' | 'allPlants' | 'plantDetails'>('dashboard');
+  const [selectedPlantId, setSelectedPlantId] = useState<string | null>(null);
+  const [previousPage, setPreviousPage] = useState<string>('dashboard');
 
   // Stack of toasts, newest at the end
   const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -161,7 +165,20 @@ function App() {
   };
 
   setPlants(prev => [...prev, newPlant]);
-  setCurrentPage('dashboard');
+  setCurrentPage(previousPage as 'dashboard' | 'allPlants');
+};
+
+const navigateTo = (page: string) => {
+  if (page === 'dashboard' || page === 'allPlants') {
+    setPreviousPage(page);
+    setCurrentPage(page);
+    setSelectedPlantId(null);
+  }
+};
+
+const handleViewPlant = (plantId: string) => {
+  setSelectedPlantId(plantId);
+  setCurrentPage('plantDetails');
 };
 
 if (currentPage === 'addPlant') {
@@ -169,14 +186,63 @@ if (currentPage === 'addPlant') {
     <AddPlant
       owners={Array.from(new Set(plants.map(p => p.owner))).sort()}
       onAdd={addPlant}
-      onCancel={() => setCurrentPage('dashboard')}
+      onCancel={() => setCurrentPage(previousPage as 'dashboard' | 'allPlants')}
     />
+  );
+}
+
+if (currentPage === 'allPlants') {
+  return (
+    <>
+      <AllPlants
+        plants={plants}
+        onWater={logWatering}
+        onAddPlant={() => { setPreviousPage('allPlants'); setCurrentPage('addPlant'); }}
+        onViewPlant={handleViewPlant}
+        onNavigate={navigateTo}
+      />
+      <ToastStack toasts={toasts} onDismiss={removeToast} />
+      {confirm && (
+        <ConfirmDialog
+          plantName={confirm.plantName}
+          onConfirm={confirm.onConfirm}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
+    </>
+  );
+}
+
+if (currentPage === 'plantDetails' && selectedPlantId) {
+  const plant = plants.find(p => p.id === selectedPlantId);
+  if (!plant) {
+    setCurrentPage('allPlants');
+    return null;
+  }
+
+  return (
+    <>
+      <PlantDetails
+        plant={plant}
+        onWater={logWatering}
+        onBack={() => setCurrentPage('allPlants')}
+        onNavigate={navigateTo}
+      />
+      <ToastStack toasts={toasts} onDismiss={removeToast} />
+      {confirm && (
+        <ConfirmDialog
+          plantName={confirm.plantName}
+          onConfirm={confirm.onConfirm}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
+    </>
   );
 }
 
   return (
     <>
-      <Dashboard plants={plants} onWater={logWatering} onAddPlant={() => setCurrentPage('addPlant')} />
+      <Dashboard plants={plants} onWater={logWatering} onAddPlant={() => setCurrentPage('addPlant')} onNavigate={navigateTo} />
 
       {/* Toast stack in the bottom right */}
       <ToastStack toasts={toasts} onDismiss={removeToast} />

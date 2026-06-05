@@ -43,15 +43,30 @@ const iconPaths: Record<string, JSX.Element> = {
 
 interface SidebarProps {
   items: NavItem[];
-  onHomeClick: () => void;
+  currentPage?: string;
+  onNavigate?: (page: string) => void;
+  onHomeClick?: () => void;
 }
 
-export default function Sidebar({ items, onHomeClick }: SidebarProps) {
+const pageMap: Record<string, string> = {
+  Dashboard: 'dashboard',
+  'All Plants': 'allPlants',
+};
+
+export default function Sidebar({ items, currentPage, onNavigate, onHomeClick }: SidebarProps) {
+  const handleHome = () => {
+    if (onHomeClick) {
+      onHomeClick();
+    } else if (onNavigate) {
+      onNavigate('dashboard');
+    }
+  };
+
   return (
     <aside className="fixed left-0 top-0 h-screen w-52 z-40 flex flex-col bg-surface-900 border-r border-surface-700">
       {/* Logo, clicking returns to a clean dashboard state */}
       <button
-        onClick={onHomeClick}
+        onClick={handleHome}
         className="flex items-center justify-center h-16 border-b border-surface-700 shrink-0 hover:bg-surface-800/50 transition-colors"
         title="Back to dashboard"
       >
@@ -61,20 +76,25 @@ export default function Sidebar({ items, onHomeClick }: SidebarProps) {
 
       {/* Navigation items with icon and label */}
       <nav className="flex-1 py-4 space-y-1 px-2">
-        {items.map(item => (
-          <a
-            key={item.label}
-            href={item.href}
-            className={`flex items-center h-11 px-3 rounded-lg transition-colors duration-150
-              ${item.active
-                ? 'bg-emerald-600/10 text-emerald-500'
-                : 'text-gray-300 hover:text-white hover:bg-surface-700'
-              }`}
-          >
-            <span className="shrink-0">{iconPaths[item.icon]}</span>
-            <span className="ml-3 text-sm font-medium">{item.label}</span>
-          </a>
-        ))}
+        {items.map(item => {
+          const targetPage = pageMap[item.label] || '';
+          const isActive = currentPage === targetPage;
+
+          return (
+            <button
+              key={item.label}
+              onClick={() => onNavigate?.(targetPage)}
+              className={`w-full flex items-center h-11 px-3 rounded-lg transition-colors duration-150
+                ${isActive
+                  ? 'bg-emerald-600/10 text-emerald-500'
+                  : 'text-gray-300 hover:text-white hover:bg-surface-700'
+                }`}
+            >
+              <span className="shrink-0">{iconPaths[item.icon]}</span>
+              <span className="ml-3 text-sm font-medium">{item.label}</span>
+            </button>
+          );
+        })}
       </nav>
     </aside>
   );

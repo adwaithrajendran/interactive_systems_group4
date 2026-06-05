@@ -5,7 +5,7 @@ import type { Plant, NavItem } from '../types';
 
 // Sidebar navigation items
 export const navItems: NavItem[] = [
-  { label: 'Dashboard', icon: 'grid', href: '#', active: true },
+  { label: 'Dashboard', icon: 'grid', href: '#' },
   { label: 'All Plants', icon: 'leaf', href: '#' },
   { label: 'Schedule', icon: 'calendar', href: '#' },
   { label: 'Statistics', icon: 'bar-chart', href: '#' },

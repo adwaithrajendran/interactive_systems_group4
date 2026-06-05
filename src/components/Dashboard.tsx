@@ -17,10 +17,11 @@ import type { Plant, Reminder, SortMode } from '../types';
 interface DashboardProps {
   plants: Plant[];
   onWater: (plantId: string) => void;
-  onAddPlant:() => void;
+  onAddPlant: () => void;
+  onNavigate?: (page: string) => void;
 }
 
-export default function Dashboard({ plants, onWater, onAddPlant}: DashboardProps) {
+export default function Dashboard({ plants, onWater, onAddPlant, onNavigate }: DashboardProps) {
   // Sort mode for the plants section
   const [sortMode, setSortMode] = useState<SortMode>('location');
 
@@ -93,7 +94,7 @@ export default function Dashboard({ plants, onWater, onAddPlant}: DashboardProps
 
   return (
     <div className="min-h-screen bg-transparent">
-      <Sidebar items={navItems} onHomeClick={resetDashboard} />
+        <Sidebar items={navItems} currentPage="dashboard" onNavigate={onNavigate} onHomeClick={resetDashboard} />
 
       <div className="pl-52">
         <TopNavbar

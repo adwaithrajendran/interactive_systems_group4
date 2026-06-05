@@ -12,13 +12,21 @@ const statusPill: Record<HealthStatus, { bg: string; text: string; label: string
 interface PlantCardProps {
   plant: Plant;
   onWater: (plantId: string) => void;
+  onClick?: (plantId: string) => void;
 }
 
-export default function PlantCard({ plant, onWater }: PlantCardProps) {
+export default function PlantCard({ plant, onWater, onClick }: PlantCardProps) {
   const pill = statusPill[plant.health];
 
+  const handleClick = () => {
+    if (onClick) onClick(plant.id);
+  };
+
   return (
-    <div className="bg-surface-800 border border-surface-700 rounded-lg p-4 hover:border-emerald-600/40 transition-colors">
+    <div
+      onClick={handleClick}
+      className={`bg-surface-800 border border-surface-700 rounded-lg p-4 hover:border-emerald-600/40 transition-colors ${onClick ? 'cursor-pointer' : ''}`}
+    >
       {/* Top row: avatar, plant info, status pill */}
       <div className="flex items-center gap-3 mb-3">
         <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-base font-bold text-emerald-700 shrink-0">
@@ -33,7 +41,7 @@ export default function PlantCard({ plant, onWater }: PlantCardProps) {
             </span>
           </div>
           <p className="text-sm text-gray-300 truncate">{plant.species}</p>
-          <p className="text-xs text-gray-400 mt-0.5">{dueLabel(plant)}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{plant.room} · {dueLabel(plant)}</p>
         </div>
 
         <span
@@ -45,7 +53,7 @@ export default function PlantCard({ plant, onWater }: PlantCardProps) {
 
       {/* Full width Water button */}
       <button
-        onClick={() => onWater(plant.id)}
+        onClick={(e) => { e.stopPropagation(); onWater(plant.id); }}
         className="w-full py-2 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 hover:text-emerald-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
       >
         <svg

@@ -43,3 +43,5 @@ export interface PlantFormData {
 }
 
 export type SortMode = 'location' | 'name' | 'owner';
+
+export type AllPlantsSortMode = 'name' | 'name-desc' | 'location' | 'owner' | 'nextWatering';
