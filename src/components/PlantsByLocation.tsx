@@ -6,16 +6,22 @@ import type { Plant } from '../types';
 interface Props {
   plants: Plant[];
   onWater: (plantId: string) => void;
+  onClick?: (plantId: string) => void;
 }
 
-export default function PlantsByLocation({ plants, onWater }: Props) {
+export default function PlantsByLocation({ plants, onWater, onClick }: Props) {
   const grouped = plants.reduce<Record<string, Plant[]>>((acc, plant) => {
     if (!acc[plant.room]) acc[plant.room] = [];
     acc[plant.room].push(plant);
     return acc;
   }, {});
 
-  const sortedRooms = Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
+  const sortedRooms = Object.entries(grouped)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([room, roomPlants]) => [
+      room,
+      [...roomPlants].sort((a, b) => a.name.localeCompare(b.name)),
+    ] as [string, Plant[]]);
 
   return (
     <div>
@@ -29,7 +35,7 @@ export default function PlantsByLocation({ plants, onWater }: Props) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {roomPlants.map(plant => (
-              <PlantCard key={plant.id} plant={plant} onWater={onWater} />
+              <PlantCard key={plant.id} plant={plant} onWater={onWater} onClick={onClick} />
             ))}
           </div>
         </div>

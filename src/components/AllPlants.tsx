@@ -1,6 +1,9 @@
 import { useState, useMemo } from 'react';
 import Sidebar from './Sidebar';
 import PlantCard from './PlantCard';
+import PlantsByLocation from './PlantsByLocation';
+import PlantsByOwner from './PlantsByOwner';
+import PlantsByWateringDate from './PlantsByWateringDate';
 import { navItems } from '../data/mockData';
 import type { Plant, AllPlantsSortMode } from '../types';
 
@@ -36,23 +39,12 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
   }, [plants, searchQuery]);
 
   const sorted = useMemo(() => {
+    if (sortMode !== 'name' && sortMode !== 'name-desc') return [];
     const list = [...filtered];
-    switch (sortMode) {
-      case 'name':
-        list.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'name-desc':
-        list.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case 'location':
-        list.sort((a, b) => a.room.localeCompare(b.room));
-        break;
-      case 'owner':
-        list.sort((a, b) => a.owner.localeCompare(b.owner));
-        break;
-      case 'nextWatering':
-        list.sort((a, b) => a.nextWatering.localeCompare(b.nextWatering));
-        break;
+    if (sortMode === 'name') {
+      list.sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      list.sort((a, b) => b.name.localeCompare(a.name));
     }
     return list;
   }, [filtered, sortMode]);
@@ -154,12 +146,12 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
                   </button>
                 </div>
                 <span className="text-sm text-gray-400">
-                  {sorted.length} match{sorted.length === 1 ? '' : 'es'}
+                  {filtered.length} match{filtered.length === 1 ? '' : 'es'}
                 </span>
               </div>
             )}
 
-            {sorted.length === 0 && (
+            {filtered.length === 0 && (
               <div className="py-16 text-center">
                 <p className="text-lg text-gray-200">
                   {plants.length === 0
@@ -182,7 +174,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
               </div>
             )}
 
-            {sorted.length > 0 && (
+            {filtered.length > 0 && (sortMode === 'name' || sortMode === 'name-desc') && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {sorted.map(plant => (
                   <PlantCard
@@ -193,6 +185,18 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
                   />
                 ))}
               </div>
+            )}
+
+            {filtered.length > 0 && sortMode === 'location' && (
+              <PlantsByLocation plants={filtered} onWater={onWater} onClick={onViewPlant} />
+            )}
+
+            {filtered.length > 0 && sortMode === 'owner' && (
+              <PlantsByOwner plants={filtered} onWater={onWater} onClick={onViewPlant} />
+            )}
+
+            {filtered.length > 0 && sortMode === 'nextWatering' && (
+              <PlantsByWateringDate plants={filtered} onWater={onWater} onClick={onViewPlant} />
             )}
           </section>
         </main>
