@@ -18,10 +18,11 @@ interface DashboardProps {
   plants: Plant[];
   onWater: (plantId: string) => void;
   onAddPlant: () => void;
+  onViewPlant: (plantId: string) => void;
   onNavigate?: (page: string) => void;
 }
 
-export default function Dashboard({ plants, onWater, onAddPlant, onNavigate }: DashboardProps) {
+export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, onNavigate }: DashboardProps) {
   // Sort mode for the plants section
   const [sortMode, setSortMode] = useState<SortMode>('location');
 
@@ -288,18 +289,18 @@ export default function Dashboard({ plants, onWater, onAddPlant, onNavigate }: D
 
             {/* During search, show a flat list sorted by name */}
             {visiblePlants.length > 0 && isSearching && (
-              <PlantsByName plants={visiblePlants} onWater={onWater} />
+              <PlantsByName plants={visiblePlants} onWater={onWater} onClick={onViewPlant} />
             )}
 
             {/* Otherwise show the user selected view */}
             {visiblePlants.length > 0 && !isSearching && sortMode === 'location' && (
-              <PlantsByLocation plants={visiblePlants} onWater={onWater} />
+              <PlantsByLocation plants={visiblePlants} onWater={onWater} onClick={onViewPlant} />
             )}
             {visiblePlants.length > 0 && !isSearching && sortMode === 'name' && (
-              <PlantsByName plants={visiblePlants} onWater={onWater} />
+              <PlantsByName plants={visiblePlants} onWater={onWater} onClick={onViewPlant} />
             )}
             {visiblePlants.length > 0 && !isSearching && sortMode === 'owner' && (
-              <PlantsByOwner plants={visiblePlants} onWater={onWater} />
+              <PlantsByOwner plants={visiblePlants} onWater={onWater} onClick={onViewPlant} />
             )}
           </section>
         </main>

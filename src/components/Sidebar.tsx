@@ -78,7 +78,7 @@ export default function Sidebar({ items, currentPage, onNavigate, onHomeClick }:
       <nav className="flex-1 py-4 space-y-1 px-2">
         {items.map(item => {
           const targetPage = pageMap[item.label] || '';
-          const isActive = currentPage === targetPage;
+          const isActive = item.label in pageMap && currentPage === targetPage;
 
           return (
             <button

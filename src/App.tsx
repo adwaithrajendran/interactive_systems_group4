@@ -244,7 +244,7 @@ if (currentPage === 'plantDetails' && selectedPlantId) {
 
   return (
     <>
-      <Dashboard plants={plants} onWater={logWatering} onAddPlant={() => setCurrentPage('addPlant')} onNavigate={navigateTo} />
+      <Dashboard plants={plants} onWater={logWatering} onAddPlant={() => setCurrentPage('addPlant')} onViewPlant={handleViewPlant} onNavigate={navigateTo} />
 
       {/* Toast stack in the bottom right */}
       <ToastStack toasts={toasts} onDismiss={removeToast} />

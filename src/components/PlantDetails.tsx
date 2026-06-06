@@ -21,7 +21,7 @@ export default function PlantDetails({ plant, onWater, onBack, onNavigate }: Pla
 
   return (
     <div className="min-h-screen bg-transparent">
-      <Sidebar items={navItems} currentPage="" onNavigate={onNavigate} />
+      <Sidebar items={navItems} currentPage="allPlants" onNavigate={onNavigate} />
 
       <div className="pl-52">
         <main className="p-5 bg-surface-950/60 min-h-screen space-y-4">
