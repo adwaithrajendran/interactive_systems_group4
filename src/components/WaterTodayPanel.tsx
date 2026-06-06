@@ -10,9 +10,10 @@ const VISIBLE_LIMIT = 3;
 interface WaterTodayPanelProps {
   reminders: Reminder[];
   onWater: (plantId: string) => void;
+  onViewPlant?: (plantId: string) => void;
 }
 
-export default function WaterTodayPanel({ reminders, onWater }: WaterTodayPanelProps) {
+export default function WaterTodayPanel({ reminders, onWater, onViewPlant }: WaterTodayPanelProps) {
   // Whether the View All modal is open
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -46,7 +47,8 @@ export default function WaterTodayPanel({ reminders, onWater }: WaterTodayPanelP
             return (
               <div
                 key={reminder.id}
-                className="flex items-center justify-between bg-surface-700/50 hover:bg-surface-700/80 rounded-lg p-3 transition-colors"
+                onClick={() => onViewPlant?.(reminder.plantId)}
+                className={`flex items-center justify-between bg-surface-700/50 hover:bg-surface-700/80 rounded-lg p-3 transition-colors ${onViewPlant ? 'cursor-pointer' : ''}`}
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-base font-bold text-emerald-700 shrink-0">
@@ -66,7 +68,7 @@ export default function WaterTodayPanel({ reminders, onWater }: WaterTodayPanelP
                 </div>
 
                 <button
-                  onClick={() => onWater(reminder.plantId)}
+                  onClick={(e) => { e.stopPropagation(); onWater(reminder.plantId); }}
                   className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors shrink-0"
                 >
                   Water
@@ -105,6 +107,7 @@ export default function WaterTodayPanel({ reminders, onWater }: WaterTodayPanelP
         <WaterAllModal
           reminders={reminders}
           onWater={onWater}
+          onViewPlant={onViewPlant}
           onClose={() => setModalOpen(false)}
         />
       )}

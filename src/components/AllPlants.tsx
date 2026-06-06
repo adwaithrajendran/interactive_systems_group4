@@ -21,8 +21,6 @@ interface AllPlantsProps {
 const sortOptions: { label: string; value: AllPlantsSortMode }[] = [
   { label: 'Plant Name (A–Z)', value: 'name' },
   { label: 'Plant Name (Z–A)', value: 'name-desc' },
-  { label: 'Location', value: 'location' },
-  { label: 'Status', value: 'status' },
   { label: 'Last Watered', value: 'lastWatered' },
   { label: 'Next Watering', value: 'nextWatering' },
 ];
@@ -140,14 +138,6 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
       case 'name-desc':
         list.sort((a, b) => b.name.localeCompare(a.name));
         break;
-      case 'location':
-        list.sort((a, b) => a.room.localeCompare(b.room) || a.name.localeCompare(b.name));
-        break;
-      case 'status': {
-        const order: Record<HealthStatus, number> = { critical: 0, warning: 1, healthy: 2 };
-        list.sort((a, b) => order[a.health] - order[b.health] || a.name.localeCompare(b.name));
-        break;
-      }
       case 'lastWatered':
         list.sort((a, b) => b.lastWatered.localeCompare(a.lastWatered) || a.name.localeCompare(b.name));
         break;
@@ -489,10 +479,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
                                       >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
                                           fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                          <path d="M11 4H4v7" />
-                                          <path d="M4 4l7 7" />
-                                          <path d="M13 20h7v-7" />
-                                          <path d="M20 20l-7-7" />
+                                          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
                                         </svg>
                                         Edit Plant
                                       </button>

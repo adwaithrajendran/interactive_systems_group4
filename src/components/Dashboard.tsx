@@ -244,7 +244,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
                   <MetricCard label="Healthy" value={healthyCount} accent="healthy" />
                 </div>
 
-                <WaterTodayPanel reminders={waterTodayList} onWater={onWater} />
+                <WaterTodayPanel reminders={waterTodayList} onWater={onWater} onViewPlant={onViewPlant} />
               </div>
             </section>
           )}
