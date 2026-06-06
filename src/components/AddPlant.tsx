@@ -20,10 +20,12 @@ interface AddPlantProps {
   owners: string[];
   onAdd: (plant: PlantFormData) => void;
   onCancel: () => void;
+  currentPage: string;
+  onNavigate: (page: string) => void;
 }
+
  
-export default function AddPlant({ owners, onAdd, onCancel }: AddPlantProps) {
-  const [name, setName] = useState('');
+export default function AddPlant({ owners, onAdd, onCancel, currentPage, onNavigate }: AddPlantProps) {  const [name, setName] = useState('');
   const [species, setSpecies] = useState('');
   const [room, setRoom] = useState('');
   const [owner, setOwner] = useState('');
@@ -41,8 +43,12 @@ export default function AddPlant({ owners, onAdd, onCancel }: AddPlantProps) {
  
   return (
     <div className="min-h-screen bg-transparent">
-      <Sidebar items={navItems} onHomeClick={() => {}} />
- 
+      <Sidebar
+        items={navItems}
+        onHomeClick={onCancel}
+        currentPage={currentPage}
+        onNavigate={onNavigate}
+      /> 
       <div className="pl-56">
         <TopNavbar 
             searchQuery="" 

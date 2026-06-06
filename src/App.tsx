@@ -169,7 +169,7 @@ function App() {
 };
 
 const navigateTo = (page: string) => {
-  if (page === 'dashboard' || page === 'allPlants') {
+  if (page === 'dashboard' || page === 'allPlants' || page === 'addPlant') {
     setPreviousPage(page);
     setCurrentPage(page);
     setSelectedPlantId(null);
@@ -187,6 +187,8 @@ if (currentPage === 'addPlant') {
       owners={Array.from(new Set(plants.map(p => p.owner))).sort()}
       onAdd={addPlant}
       onCancel={() => setCurrentPage(previousPage as 'dashboard' | 'allPlants')}
+      currentPage={currentPage}        // add this
+      onNavigate={navigateTo}          // add this
     />
   );
 }
