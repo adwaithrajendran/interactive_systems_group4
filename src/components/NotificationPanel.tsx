@@ -6,12 +6,14 @@ import type { Reminder } from '../types';
 interface NotificationPanelProps {
   reminders: Reminder[];
   onWater: (plantId: string) => void;
+  onViewPlant?: (plantId: string) => void;
   onClose: () => void;
 }
 
 export default function NotificationPanel({
   reminders,
   onWater,
+  onViewPlant,
   onClose,
 }: NotificationPanelProps) {
   // Sort so overdue items come first, then due today
@@ -86,7 +88,8 @@ export default function NotificationPanel({
               return (
                 <div
                   key={reminder.id}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-surface-700/50 transition-colors border-b border-surface-700/50 last:border-b-0"
+                  onClick={() => onViewPlant?.(reminder.plantId)}
+                  className={`flex items-center gap-3 px-4 py-3 hover:bg-surface-700/50 transition-colors border-b border-surface-700/50 last:border-b-0 ${onViewPlant ? 'cursor-pointer' : ''}`}
                 >
                   {/* Status indicator */}
                   <div className={`w-2 h-2 rounded-full ${iconColor} shrink-0`} />
@@ -106,7 +109,7 @@ export default function NotificationPanel({
 
                   {/* Quick Water button */}
                   <button
-                    onClick={() => onWater(reminder.plantId)}
+                    onClick={(e) => { e.stopPropagation(); onWater(reminder.plantId); }}
                     className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors shrink-0"
                   >
                     Water

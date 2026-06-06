@@ -103,6 +103,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
           onSearchChange={setSearchQuery}
           reminders={allReminders}
           onWater={onWater}
+          onViewPlant={onViewPlant}
         />
 
         <main className="p-5 bg-surface-950/60 min-h-screen space-y-4">

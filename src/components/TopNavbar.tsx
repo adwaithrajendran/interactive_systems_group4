@@ -9,6 +9,7 @@ interface TopNavbarProps {
   onSearchChange: (value: string) => void;
   reminders: Reminder[];
   onWater: (plantId: string) => void;
+  onViewPlant?: (plantId: string) => void;
 }
 
 export default function TopNavbar({
@@ -16,6 +17,7 @@ export default function TopNavbar({
   onSearchChange,
   reminders,
   onWater,
+  onViewPlant,
 }: TopNavbarProps) {
   // Track whether the notification panel is open
   const [notifOpen, setNotifOpen] = useState(false);
@@ -115,6 +117,7 @@ export default function TopNavbar({
           <NotificationPanel
             reminders={reminders}
             onWater={handleWaterFromPanel}
+            onViewPlant={onViewPlant}
             onClose={() => setNotifOpen(false)}
           />
         )}

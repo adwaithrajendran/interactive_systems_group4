@@ -230,9 +230,6 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
                 </svg>
                 Water Now
               </button>
-              <button className="px-5 py-2.5 rounded-lg bg-surface-800 hover:bg-surface-700 text-gray-200 text-sm font-semibold transition-colors border border-surface-700">
-                View All History
-              </button>
             </div>
           </section>
 
