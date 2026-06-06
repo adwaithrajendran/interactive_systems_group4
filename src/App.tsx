@@ -32,6 +32,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'addPlant' | 'allPlants' | 'plantDetails'>('dashboard');
   const [selectedPlantId, setSelectedPlantId] = useState<string | null>(null);
   const [previousPage, setPreviousPage] = useState<string>('dashboard');
+  const [plantDetailsSource, setPlantDetailsSource] = useState<'dashboard' | 'allPlants'>('allPlants');
 
   // Stack of toasts, newest at the end
   const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -178,6 +179,7 @@ const navigateTo = (page: string) => {
 
 const handleViewPlant = (plantId: string) => {
   setSelectedPlantId(plantId);
+  setPlantDetailsSource(currentPage as 'dashboard' | 'allPlants');
   setCurrentPage('plantDetails');
 };
 
@@ -227,7 +229,8 @@ if (currentPage === 'plantDetails' && selectedPlantId) {
       <PlantDetails
         plant={plant}
         onWater={logWatering}
-        onBack={() => setCurrentPage('allPlants')}
+        sourcePage={plantDetailsSource}
+        onBack={() => setCurrentPage(plantDetailsSource)}
         onNavigate={navigateTo}
       />
       <ToastStack toasts={toasts} onDismiss={removeToast} />

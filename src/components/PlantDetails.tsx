@@ -54,6 +54,7 @@ const eventColors: Record<CareEvent['type'], string> = {
 interface PlantDetailsProps {
   plant: Plant;
   onWater: (plantId: string) => void;
+  sourcePage: 'dashboard' | 'allPlants';
   onBack: () => void;
   onNavigate?: (page: string) => void;
 }
@@ -76,7 +77,7 @@ function relativeDate(dateStr: string): string {
   return `${months} month${months === 1 ? '' : 's'} ago`;
 }
 
-export default function PlantDetails({ plant, onWater, onBack, onNavigate }: PlantDetailsProps) {
+export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNavigate }: PlantDetailsProps) {
   const status = statusStyles[plant.health];
   const info = getPlantExtra(plant);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -90,6 +91,8 @@ export default function PlantDetails({ plant, onWater, onBack, onNavigate }: Pla
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
+
+  const backLabel = sourcePage === 'dashboard' ? 'Back to Dashboard' : 'Back to All Plants';
 
   return (
     <div className="min-h-screen bg-transparent">
@@ -106,7 +109,7 @@ export default function PlantDetails({ plant, onWater, onBack, onNavigate }: Pla
               <line x1="19" y1="12" x2="5" y2="12" />
               <polyline points="12 19 5 12 12 5" />
             </svg>
-            Back to All Plants
+            {backLabel}
           </button>
 
           {/* Section 1 – Plant Summary Card */}
