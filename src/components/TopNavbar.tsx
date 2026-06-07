@@ -1,4 +1,5 @@
-// Top navigation bar with search and notification panel
+// Top navigation bar with search input and notification bell
+// Appears at the top of every main screen
 
 import { useState } from 'react';
 import NotificationPanel from './NotificationPanel';
@@ -19,11 +20,11 @@ export default function TopNavbar({
   onWater,
   onViewPlant,
 }: TopNavbarProps) {
-  // Track whether the notification panel is open
+  // Whether the notification panel dropdown is open
   const [notifOpen, setNotifOpen] = useState(false);
 
-  // When user waters from the panel, log it and keep the panel open
-  // so they can continue working through the list
+  // Water from the notification panel uses the same logWatering flow as everywhere else
+  // The panel stays open after a watering so the user can work through multiple items
   const handleWaterFromPanel = (plantId: string) => {
     onWater(plantId);
   };
@@ -54,7 +55,7 @@ export default function TopNavbar({
           placeholder="Search by name, species, or room..."
           className="w-full bg-transparent border-none outline-none text-base text-white placeholder-gray-400"
         />
-        {/* Clear button when there is text */}
+        {/* Clear button only shows when there is search text */}
         {searchQuery && (
           <button
             onClick={() => onSearchChange('')}
@@ -104,7 +105,7 @@ export default function TopNavbar({
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
-          {/* Badge shows real count, hidden when zero */}
+          {/* Red count badge, hidden when there is nothing pending */}
           {reminders.length > 0 && (
             <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-rose-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
               {reminders.length}
@@ -112,7 +113,7 @@ export default function TopNavbar({
           )}
         </button>
 
-        {/* Panel renders only when open */}
+        {/* Panel only mounts when open, so the rest of the app is unaffected when closed */}
         {notifOpen && (
           <NotificationPanel
             reminders={reminders}

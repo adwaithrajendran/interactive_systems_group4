@@ -1,6 +1,7 @@
-// Confirmation dialog shown when a user tries to water a plant
+// Confirmation dialog shown when the user tries to water a plant
 // that was already watered recently
-// Prevents accidental overwatering, which the interview flagged as a real risk
+// Prevents accidental overwatering, which the user interview flagged as the
+// most common cause of plant death in the scenario
 
 interface ConfirmDialogProps {
   plantName: string;
@@ -15,12 +16,12 @@ export default function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <>
-      {/* Backdrop, clicking outside cancels */}
+      {/* Full screen backdrop. Clicking anywhere outside the dialog cancels it */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
         onClick={onCancel}
       >
-        {/* Dialog box, stopPropagation so clicking inside does not close */}
+        {/* Dialog box, stopPropagation so clicking inside does not bubble to the backdrop */}
         <div
           className="bg-surface-800 border border-surface-700 rounded-2xl p-6 max-w-md w-full shadow-2xl"
           onClick={e => e.stopPropagation()}

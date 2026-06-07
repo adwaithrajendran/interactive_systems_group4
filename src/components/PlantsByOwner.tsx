@@ -1,4 +1,6 @@
 // Plants grouped by their owner
+// Used when the dashboard sort mode is set to "Owner"
+// Helpful in a shared household for separating each person's plants
 
 import PlantCard from './PlantCard';
 import type { Plant } from '../types';
@@ -10,12 +12,14 @@ interface Props {
 }
 
 export default function PlantsByOwner({ plants, onWater, onClick }: Props) {
+  // Group plants into buckets keyed by owner name
   const grouped = plants.reduce<Record<string, Plant[]>>((acc, plant) => {
     if (!acc[plant.owner]) acc[plant.owner] = [];
     acc[plant.owner].push(plant);
     return acc;
   }, {});
 
+  // Sort owners alphabetically and plants alphabetically within each owner
   const sortedOwners = Object.entries(grouped)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([owner, ownerPlants]) => [

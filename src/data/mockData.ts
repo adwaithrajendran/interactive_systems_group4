@@ -1,9 +1,11 @@
 // Mock data for the Sprout app
-// Plants are owned by Sam, Priya, or Alex in a shared household
+// Provides the initial plant collection and the sidebar nav items
+// In a real app these would come from a backend, but the assignment is frontend only
 
 import type { Plant, NavItem } from '../types';
 
 // Sidebar navigation items
+// Only Dashboard and All Plants are wired up, the rest are placeholders for the demo
 export const navItems: NavItem[] = [
   { label: 'Dashboard', icon: 'grid', href: '#' },
   { label: 'All Plants', icon: 'leaf', href: '#' },
@@ -12,7 +14,8 @@ export const navItems: NavItem[] = [
   { label: 'Settings', icon: 'settings', href: '#' },
 ];
 
-// Helper to make dates relative to today
+// Helper to build dates relative to today
+// Using relative dates means the demo always looks fresh when run, regardless of the calendar date
 function daysFromNow(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() + days);
@@ -20,7 +23,9 @@ function daysFromNow(days: number): string {
 }
 
 // Initial plant data
-// The health field sets the starting state and only changes when a user clicks Water
+// The collection is chosen to cover the full watering frequency range from the scenario:
+// short (basil, every 2 to 3 days) through to long (cactus, every 21 days)
+// Health states are pre-set so the dashboard shows a mix of Overdue, Due Soon, and Ok on first load
 export const plants: Plant[] = [
   {
     id: '1',

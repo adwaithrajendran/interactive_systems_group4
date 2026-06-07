@@ -1,4 +1,5 @@
-// A summary tile showing one number with a coloured value
+// Summary tile shown in the dashboard, eg Needs Water 3
+// The accent prop colours the number based on what it represents
 
 interface MetricCardProps {
   label: string;
@@ -6,6 +7,7 @@ interface MetricCardProps {
   accent: 'critical' | 'neutral' | 'healthy';
 }
 
+// Colour theme per accent type
 const accentStyles = {
   critical: 'text-rose-300',
   neutral: 'text-white',

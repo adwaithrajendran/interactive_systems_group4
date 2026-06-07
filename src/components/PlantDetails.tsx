@@ -1,17 +1,23 @@
+// Plant Details screen
+// Shows full information about a single plant including its care history
+// Reachable by clicking a plant from the Dashboard or the All Plants screen
+
 import { useState, useEffect, useRef } from 'react';
 import Sidebar from './Sidebar';
 import { navItems } from '../data/mockData';
 import { getPlantExtra } from '../data/plantDetailsMock';
 import type { CareEvent } from '../data/plantDetailsMock';
-import { dueLabel, lastWateredLabel } from '../utils/plantStatus';
+import { lastWateredLabel } from '../utils/plantStatus';
 import type { Plant, HealthStatus } from '../types';
 
+// Style and label per health state, used by the status pill in the header
 const statusStyles: Record<HealthStatus, { bg: string; text: string; label: string }> = {
   healthy: { bg: 'bg-emerald-600', text: 'text-white', label: 'Healthy' },
   warning: { bg: 'bg-amber-400', text: 'text-white', label: 'Due Soon' },
   critical: { bg: 'bg-rose-500', text: 'text-white', label: 'Overdue' },
 };
 
+// Icons shown next to each event in the care history timeline
 const eventIcons: Record<CareEvent['type'], JSX.Element> = {
   watered: (
     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
@@ -44,6 +50,7 @@ const eventIcons: Record<CareEvent['type'], JSX.Element> = {
   ),
 };
 
+// Colour theme per event type, used for the timeline dots
 const eventColors: Record<CareEvent['type'], string> = {
   watered: 'bg-emerald-500/20 border-emerald-500 text-emerald-400',
   fertilized: 'bg-emerald-500/20 border-emerald-500 text-emerald-400',
@@ -59,11 +66,13 @@ interface PlantDetailsProps {
   onNavigate?: (page: string) => void;
 }
 
+// Friendly date format for the care history timeline, eg "15 May 2026"
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
+// Relative date label like "Yesterday" or "3 days ago"
 function relativeDate(dateStr: string): string {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
@@ -79,10 +88,15 @@ function relativeDate(dateStr: string): string {
 
 export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNavigate }: PlantDetailsProps) {
   const status = statusStyles[plant.health];
+
+  // Pull species level info, care events, and streak from the mock data
   const info = getPlantExtra(plant);
+
+  // Three dot actions menu open state
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // Close the actions menu when the user clicks anywhere outside it
   useEffect(() => {
     if (!menuOpen) return;
     const handler = (e: MouseEvent) => {
@@ -92,6 +106,7 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
 
+  // Back button label depends on where the user came from
   const backLabel = sourcePage === 'dashboard' ? 'Back to Dashboard' : 'Back to All Plants';
 
   return (
@@ -100,6 +115,7 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
 
       <div className="pl-52">
         <main className="p-6 bg-surface-950/60 min-h-screen space-y-6">
+          {/* Back link to the previous screen */}
           <button
             onClick={onBack}
             className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
@@ -112,7 +128,7 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
             {backLabel}
           </button>
 
-          {/* Section 1 – Plant Summary Card */}
+          {/* Summary card: name, species, status, streak, room, schedule */}
           <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-6">
             <div className="flex items-start gap-5">
               <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center text-3xl font-bold text-emerald-700 shrink-0">
@@ -133,6 +149,7 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
                   </span>
                 </div>
 
+                {/* Room, schedule, and status pills */}
                 <div className="flex items-center gap-2 mt-3 flex-wrap">
                   <span className="px-3 py-1 rounded-full text-xs font-medium bg-surface-700 text-gray-200">
                     {plant.room}
@@ -146,7 +163,8 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
                 </div>
               </div>
 
-              {/* Three-dot actions menu */}
+              {/* ====== MIDPOINT MARKER ====== */}
+              {/* Three dot actions menu: Water Now, Log Fertilising, Log Repotting, Edit, Delete */}
               <div ref={menuRef} className="relative shrink-0 self-start">
                 <button
                   onClick={() => setMenuOpen(!menuOpen)}
@@ -219,6 +237,7 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
               </div>
             </div>
 
+            {/* Primary Water Now action, separated from the menu so it stays one tap away */}
             <div className="flex items-center gap-3 mt-5 pt-5 border-t border-surface-700">
               <button
                 onClick={() => onWater(plant.id)}
@@ -233,7 +252,7 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
             </div>
           </section>
 
-          {/* Section 2 – Plant Information */}
+          {/* About the plant and species specific tips */}
           <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
@@ -259,7 +278,7 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
             </div>
           </section>
 
-          {/* Section 3 – Care History Timeline */}
+          {/* Care history timeline */}
           <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-6">
             <h2 className="text-lg font-bold text-white mb-5">Care History</h2>
             <div className="space-y-0">
@@ -267,6 +286,7 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
                 const isLast = i === info.careEvents.length - 1;
                 return (
                   <div key={event.id} className="relative flex gap-4 pb-5 last:pb-0">
+                    {/* Vertical connector line between events */}
                     {!isLast && (
                       <div className="absolute left-[15px] top-5 bottom-0 w-0.5 bg-surface-600" />
                     )}
@@ -289,6 +309,7 @@ export default function PlantDetails({ plant, onWater, sourcePage, onBack, onNav
   );
 }
 
+// Small reusable row for the About the Plant section
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-0.5">

@@ -1,10 +1,13 @@
-// Panel showing plants that need water today
-// Caps the visible list at 3 with a View All button for the rest
+// Water Today panel
+// Shows plants that need water today, capped at three visible items
+// A View All button opens a modal with the full list when there are more
 
 import { useState } from 'react';
 import WaterAllModal from './WaterAllModal';
 import type { Reminder } from '../types';
 
+// Cap on how many plants are shown directly in the panel
+// Anything beyond this is reachable through the View All button
 const VISIBLE_LIMIT = 3;
 
 interface WaterTodayPanelProps {
@@ -17,7 +20,7 @@ export default function WaterTodayPanel({ reminders, onWater, onViewPlant }: Wat
   // Whether the View All modal is open
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Slice the visible portion of the list
+  // Slice the panel into a visible chunk and a count of what is hidden
   const visibleReminders = reminders.slice(0, VISIBLE_LIMIT);
   const hiddenCount = Math.max(0, reminders.length - VISIBLE_LIMIT);
 
@@ -29,7 +32,7 @@ export default function WaterTodayPanel({ reminders, onWater, onViewPlant }: Wat
           <span className="text-sm text-gray-300">{reminders.length} pending</span>
         </div>
 
-        {/* Empty state */}
+        {/* Empty state when nothing needs water */}
         {reminders.length === 0 && (
           <div className="flex-1 py-12 text-center">
             <p className="text-base text-gray-200">All caught up</p>
@@ -37,7 +40,7 @@ export default function WaterTodayPanel({ reminders, onWater, onViewPlant }: Wat
           </div>
         )}
 
-        {/* List of plants needing water, capped */}
+        {/* Visible list of plants needing water */}
         <div className="space-y-2 flex-1">
           {visibleReminders.map(reminder => {
             const dueText = reminder.status === 'overdue' ? 'overdue' : 'due today';
@@ -67,6 +70,7 @@ export default function WaterTodayPanel({ reminders, onWater, onViewPlant }: Wat
                   </div>
                 </div>
 
+                {/* stopPropagation so the Water click does not also open Plant Details */}
                 <button
                   onClick={(e) => { e.stopPropagation(); onWater(reminder.plantId); }}
                   className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors shrink-0"
@@ -78,7 +82,7 @@ export default function WaterTodayPanel({ reminders, onWater, onViewPlant }: Wat
           })}
         </div>
 
-        {/* View All button shown when there are hidden items */}
+        {/* View All button, shown only when there are hidden plants */}
         {hiddenCount > 0 && (
           <button
             onClick={() => setModalOpen(true)}
@@ -102,7 +106,7 @@ export default function WaterTodayPanel({ reminders, onWater, onViewPlant }: Wat
         )}
       </div>
 
-      {/* Modal showing the full list */}
+      {/* Modal showing every plant that needs water, not just the first three */}
       {modalOpen && (
         <WaterAllModal
           reminders={reminders}

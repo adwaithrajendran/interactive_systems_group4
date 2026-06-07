@@ -1,8 +1,11 @@
 // Left side navigation bar
 // Always expanded so labels are visible alongside icons
+// Only Dashboard and All Plants are implemented, the others are placeholders
 
 import type { NavItem } from '../types';
 
+// SVG icon library, keyed by the icon name set in mockData
+// Inlining the SVGs keeps the project free of icon dependencies
 const iconPaths: Record<string, JSX.Element> = {
   grid: (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -48,12 +51,15 @@ interface SidebarProps {
   onHomeClick?: () => void;
 }
 
+// Maps human-readable nav labels to the internal page keys used by App.tsx
+// Only labels listed here are clickable, the rest are placeholders for the demo
 const pageMap: Record<string, string> = {
   Dashboard: 'dashboard',
   'All Plants': 'allPlants',
 };
 
 export default function Sidebar({ items, currentPage, onNavigate, onHomeClick }: SidebarProps) {
+  // Logo click goes home, falling back to a plain dashboard nav if no custom handler is set
   const handleHome = () => {
     if (onHomeClick) {
       onHomeClick();
@@ -64,7 +70,7 @@ export default function Sidebar({ items, currentPage, onNavigate, onHomeClick }:
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-52 z-40 flex flex-col bg-surface-900 border-r border-surface-700">
-      {/* Logo, clicking returns to a clean dashboard state */}
+      {/* Logo, clicking returns the user to a clean dashboard state */}
       <button
         onClick={handleHome}
         className="flex items-center justify-center h-16 border-b border-surface-700 shrink-0 hover:bg-surface-800/50 transition-colors"

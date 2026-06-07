@@ -1,7 +1,11 @@
 // A single toast notification
-// Lives inside ToastStack which handles positioning
+// Lives inside ToastStack which handles stacking and positioning
+// Auto-dismisses after a few seconds, with an Undo option in the meantime
 
 import { useEffect } from 'react';
+
+// How long a toast stays on screen before auto-dismissing, in milliseconds
+const AUTO_DISMISS_MS = 4000;
 
 interface ToastProps {
   message: string;
@@ -10,11 +14,12 @@ interface ToastProps {
 }
 
 export default function Toast({ message, onUndo, onDismiss }: ToastProps) {
-  // Auto-dismiss after 4 seconds
+  // Set up the auto-dismiss timer when this toast mounts
+  // Clear the timer if the component unmounts first
   useEffect(() => {
     const timer = setTimeout(() => {
       onDismiss();
-    }, 4000);
+    }, AUTO_DISMISS_MS);
 
     return () => clearTimeout(timer);
   }, [onDismiss]);
@@ -45,7 +50,7 @@ export default function Toast({ message, onUndo, onDismiss }: ToastProps) {
         <p className="text-xs text-gray-400 mt-0.5">Tap undo if this was a mistake</p>
       </div>
 
-      {/* Undo button */}
+      {/* Undo button, restores the previous plant state */}
       <button
         onClick={onUndo}
         className="px-3 py-1.5 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 text-xs font-semibold transition-colors shrink-0"
@@ -53,7 +58,7 @@ export default function Toast({ message, onUndo, onDismiss }: ToastProps) {
         Undo
       </button>
 
-      {/* Dismiss button */}
+      {/* Dismiss button, closes the toast immediately */}
       <button
         onClick={onDismiss}
         className="p-1 rounded text-gray-500 hover:text-gray-200 transition-colors shrink-0"

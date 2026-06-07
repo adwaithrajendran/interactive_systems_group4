@@ -1,9 +1,14 @@
+// All Plants screen
+// A complete view of every plant with search, sort, and filter by status or location
+// Reachable from the sidebar. Plants link through to the Plant Details screen
+
 import { useState, useMemo, useEffect, useRef } from 'react';
 import Sidebar from './Sidebar';
 import { navItems } from '../data/mockData';
 import { lastWateredLabel } from '../utils/plantStatus';
 import type { Plant, AllPlantsSortMode, HealthStatus } from '../types';
 
+// Style and label for the status badge in the table
 const statusBadge: Record<HealthStatus, { bg: string; text: string; label: string }> = {
   healthy: { bg: 'bg-emerald-600', text: 'text-white', label: 'OK' },
   warning: { bg: 'bg-amber-400', text: 'text-white', label: 'Due Soon' },
@@ -18,13 +23,15 @@ interface AllPlantsProps {
   onNavigate?: (page: string) => void;
 }
 
+// Sort options shown in the dropdown
 const sortOptions: { label: string; value: AllPlantsSortMode }[] = [
-  { label: 'Plant Name (A–Z)', value: 'name' },
-  { label: 'Plant Name (Z–A)', value: 'name-desc' },
+  { label: 'Plant Name (A-Z)', value: 'name' },
+  { label: 'Plant Name (Z-A)', value: 'name-desc' },
   { label: 'Last Watered', value: 'lastWatered' },
   { label: 'Next Watering', value: 'nextWatering' },
 ];
 
+// Status filter chips shown above the table
 const statusFilters: { label: string; value: 'all' | HealthStatus }[] = [
   { label: 'All', value: 'all' },
   { label: 'Overdue', value: 'critical' },
@@ -38,10 +45,13 @@ type SortDropdownProps = {
   options: { label: string; value: AllPlantsSortMode }[];
 };
 
+// Custom dropdown used for the sort selector
+// A plain select element does not match the rest of the dark theme, so this is a styled button + menu
 function SortDropdown({ value, onChange, options }: SortDropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
+  // Close the dropdown when the user clicks anywhere outside it
   useEffect(() => {
     if (!open) return;
     const handler = (e: MouseEvent) => {
@@ -91,14 +101,24 @@ function SortDropdown({ value, onChange, options }: SortDropdownProps) {
 }
 
 export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, onNavigate }: AllPlantsProps) {
+  // Search query, narrows the visible plants when active
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Current sort mode for the table
   const [sortMode, setSortMode] = useState<AllPlantsSortMode>('name');
+
+  // Status filter, 'all' means no filter
   const [statusFilter, setStatusFilter] = useState<'all' | HealthStatus>('all');
+
+  // Location filter, null means no filter
   const [locationFilter, setLocationFilter] = useState<string | null>(null);
+
+  // Which row's three dot menu is open, only one is open at a time
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // Close the action menu when the user clicks anywhere outside it
   useEffect(() => {
     if (!openMenuId) return;
     const handler = (e: MouseEvent) => {
@@ -109,6 +129,9 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [openMenuId]);
+
+  // Filtering pipeline: search first, then status, then location, then sort
+  // Each step uses useMemo so we only recompute when its inputs actually change
 
   const searchFiltered = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
@@ -126,8 +149,9 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
     return searchFiltered.filter(p => p.health === statusFilter);
   }, [searchFiltered, statusFilter]);
 
+  // The final list shown in the table, with location filter and sort applied
   const displayed = useMemo(() => {
-    let list = locationFilter
+    const list = locationFilter
       ? statusFiltered.filter(p => p.room === locationFilter)
       : [...statusFiltered];
 
@@ -148,6 +172,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
     return list;
   }, [statusFiltered, locationFilter, sortMode]);
 
+  // Status chip counts. Always based on the search filtered list so the numbers reflect the current search
   const statusCounts = useMemo(() => {
     const all = searchFiltered.length;
     const critical = searchFiltered.filter(p => p.health === 'critical').length;
@@ -156,16 +181,19 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
     return { all, critical, warning, healthy };
   }, [searchFiltered]);
 
+  // Unique locations, used to build the location filter chips
   const locations = useMemo(() => {
     return Array.from(new Set(plants.map(p => p.room))).sort();
   }, [plants]);
 
+  // Location chip counts, also based on the search filtered list
   const locationCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     searchFiltered.forEach(p => { counts[p.room] = (counts[p.room] || 0) + 1; });
     return counts;
   }, [searchFiltered]);
 
+  // Reset all filters back to default
   const clearFilters = () => {
     setSearchQuery('');
     setStatusFilter('all');
@@ -174,6 +202,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
 
   const hasActiveFilters = searchQuery.trim() || statusFilter !== 'all' || locationFilter !== null;
 
+  // ====== MIDPOINT MARKER ======
   return (
     <div className="min-h-screen bg-transparent">
       <Sidebar items={navItems} currentPage="allPlants" onNavigate={onNavigate} />
@@ -181,7 +210,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
       <div className="pl-52">
         <main className="p-5 bg-surface-950/60 min-h-screen space-y-4">
           <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-5">
-            {/* ── Header ── */}
+            {/* Header row with title and Add Plant button */}
             <div className="flex items-center justify-between flex-wrap gap-4 mb-5">
               <div>
                 <h1 className="text-3xl font-bold text-white">All Plants</h1>
@@ -200,7 +229,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
               </button>
             </div>
 
-            {/* ── Search + Sort row ── */}
+            {/* Search input and sort dropdown */}
             <div className="flex items-center gap-3 mb-5 flex-wrap">
               <div className="flex items-center flex-1 min-w-[200px] max-w-sm bg-surface-800 border border-surface-700 rounded-lg px-3 py-2">
                 <svg
@@ -241,7 +270,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
               <SortDropdown value={sortMode} onChange={setSortMode} options={sortOptions} />
             </div>
 
-            {/* ── Status filter chips ── */}
+            {/* Status filter chips */}
             <div className="flex items-center gap-2 flex-wrap mb-3">
               {statusFilters.map(f => {
                 const count = statusCounts[f.value];
@@ -263,7 +292,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
               })}
             </div>
 
-            {/* ── Location filter chips ── */}
+            {/* Location filter chips */}
             <div className="flex items-center gap-2 flex-wrap mb-5">
               <button
                 onClick={() => setLocationFilter(null)}
@@ -295,13 +324,13 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
               })}
             </div>
 
-            {/* ── Active search banner ── */}
+            {/* Active search banner */}
             {searchQuery.trim() && (
               <div className="flex items-center justify-between flex-wrap gap-3 mb-4 px-1">
                 <div className="text-sm text-emerald-200">
                   Showing results for{' '}
-                  <span className="font-semibold text-white">"{searchQuery}"</span>
-                  {' '}—{' '}
+                  <span className="font-semibold text-white">"{searchQuery}"</span>.
+                  {' '}
                   <button
                     onClick={() => setSearchQuery('')}
                     className="text-emerald-200 hover:text-white transition-colors underline"
@@ -313,7 +342,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
               </div>
             )}
 
-            {/* ── Active filter clear-all ── */}
+            {/* Clear all filters button, only shown when filters are active and there are matches */}
             {hasActiveFilters && displayed.length > 0 && (
               <div className="mb-3">
                 <button
@@ -325,7 +354,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
               </div>
             )}
 
-            {/* ── Empty state ── */}
+            {/* Empty state when filters return no matches */}
             {displayed.length === 0 && plants.length > 0 && (
               <div className="py-12 text-center">
                 <p className="text-base text-gray-200">No plants match your filters</p>
@@ -343,6 +372,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
               </div>
             )}
 
+            {/* Empty state when the collection itself is empty */}
             {plants.length === 0 && (
               <div className="py-16 text-center">
                 <p className="text-lg text-gray-200">No plants found. Add your first plant to get started.</p>
@@ -360,7 +390,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
               </div>
             )}
 
-            {/* ── Table (desktop) ── */}
+            {/* Plant list. Renders as a table on desktop and as cards on mobile */}
             {displayed.length > 0 && (
               <>
                 {/* Desktop table */}
@@ -385,7 +415,6 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
                             onClick={() => onViewPlant(plant.id)}
                             className="border-b border-surface-700/60 hover:bg-surface-800/40 transition-colors cursor-pointer"
                           >
-                            {/* Plant */}
                             <td className="py-3 pr-4">
                               <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-bold text-emerald-700 shrink-0">
@@ -397,23 +426,19 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
                                 </div>
                               </div>
                             </td>
-                            {/* Location */}
                             <td className="py-3 pr-4 text-sm text-gray-300">{plant.room}</td>
-                            {/* Schedule */}
                             <td className="py-3 pr-4 text-sm text-gray-300">
                               Every {plant.waterIntervalDays} day{plant.waterIntervalDays === 1 ? '' : 's'}
                             </td>
-                            {/* Last Watered */}
                             <td className="py-3 pr-4 text-sm text-gray-300">{lastWateredLabel(plant)}</td>
-                            {/* Status */}
                             <td className="py-3 pr-4">
                               <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text}`}>
                                 {badge.label}
                               </span>
                             </td>
-                            {/* Actions */}
                             <td className="py-3 relative">
                               <div className="flex items-center gap-1">
+                                {/* Quick Water button, stopPropagation so the row click does not also open Plant Details */}
                                 <button
                                   onClick={(e) => { e.stopPropagation(); onWater(plant.id); }}
                                   className="p-2 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 hover:text-emerald-200 transition-colors"
@@ -424,6 +449,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
                                     <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
                                   </svg>
                                 </button>
+                                {/* Three dot menu with secondary actions */}
                                 <div className="relative">
                                   <button
                                     onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === plant.id ? null : plant.id); }}
@@ -506,7 +532,7 @@ export default function AllPlants({ plants, onWater, onAddPlant, onViewPlant, on
                   </table>
                 </div>
 
-                {/* Mobile cards */}
+                {/* Mobile card view, shown when the table would be too wide for the screen */}
                 <div className="md:hidden space-y-2">
                   {displayed.map(plant => {
                     const badge = statusBadge[plant.health];

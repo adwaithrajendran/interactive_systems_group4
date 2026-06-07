@@ -1,15 +1,16 @@
 // Top level app component
-// Owns plant data, the toast stack, and the confirmation flow
+// Owns plant data and routes between screens
+// All watering, undo, and confirmation logic lives here in one place
 
 import { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import AllPlants from './components/AllPlants';
 import PlantDetails from './components/PlantDetails';
+import AddPlant from './components/AddPlant';
 import ToastStack from './components/ToastStack';
 import ConfirmDialog from './components/ConfirmDialog';
 import { plants as initialPlants } from './data/mockData';
-import type {Plant, PlantFormData} from './types';
-import AddPlant from './components/AddPlant';
+import type { Plant, PlantFormData } from './types';
 
 // Shape of a single toast in the stack
 interface ToastItem {
@@ -18,32 +19,43 @@ interface ToastItem {
   onUndo: () => void;
 }
 
-// Snapshot used to undo a watering
+// Snapshot of the parts of a plant that change during a watering
+// We keep this so the user can undo from the toast
 interface WateringSnapshot {
   plantId: string;
   previousState: Pick<Plant, 'lastWatered' | 'nextWatering' | 'health'>;
 }
 
-// Maximum number of toasts shown at once
+// Cap on how many toasts can be visible at once so they do not stack endlessly
 const MAX_TOASTS = 4;
 
 function App() {
+  // The plant collection, single source of truth for the whole app
   const [plants, setPlants] = useState<Plant[]>(initialPlants);
+
+  // Which screen is currently being shown
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'addPlant' | 'allPlants' | 'plantDetails'>('dashboard');
+
+  // The plant currently open in Plant Details, if any
   const [selectedPlantId, setSelectedPlantId] = useState<string | null>(null);
+
+  // Used to send the user back to where they came from after Add Plant
   const [previousPage, setPreviousPage] = useState<string>('dashboard');
+
+  // Used to label the back button on Plant Details
   const [plantDetailsSource, setPlantDetailsSource] = useState<'dashboard' | 'allPlants'>('allPlants');
 
-  // Stack of toasts, newest at the end
+  // Stack of active toasts, newest at the end
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-  // Confirmation dialog state
+  // Confirmation dialog state, null when no dialog is showing
   const [confirm, setConfirm] = useState<{
     plantName: string;
     onConfirm: () => void;
   } | null>(null);
 
-  // Check whether a plant was watered very recently
+  // Was this plant watered in the last 24 hours
+  // Used to decide whether to ask before watering again
   const wateredRecently = (plant: Plant): boolean => {
     const now = new Date();
     const last = new Date(plant.lastWatered);
@@ -51,8 +63,8 @@ function App() {
     return plant.health === 'healthy' && hoursSince < 24;
   };
 
-  // Perform the actual state update for a watering
-  // Returns a snapshot so the action can be undone
+  // Update the plant in state and return a snapshot of what changed
+  // The snapshot is later used by the Undo button on the toast
   const performWatering = (plantId: string): WateringSnapshot | null => {
     const plant = plants.find(p => p.id === plantId);
     if (!plant) return null;
@@ -87,7 +99,8 @@ function App() {
     return snapshot;
   };
 
-  // Restore a plant to a previous state, used for undo
+  // Restore a plant to the state captured in a snapshot
+  // Called when the user clicks Undo on the watering toast
   const undoWatering = (snapshot: WateringSnapshot) => {
     setPlants(currentPlants =>
       currentPlants.map(p =>
@@ -101,7 +114,8 @@ function App() {
     );
   };
 
-  // Add a toast to the stack, removing the oldest if we hit the cap
+  // Show a confirmation toast after a watering
+  // If we already have MAX_TOASTS, drop the oldest one to make room
   const pushToast = (plantName: string, snapshot: WateringSnapshot) => {
     const id = `toast-${Date.now()}-${Math.random()}`;
     const newToast: ToastItem = {
@@ -115,7 +129,6 @@ function App() {
 
     setToasts(current => {
       const next = [...current, newToast];
-      // Drop oldest if we exceed the cap
       if (next.length > MAX_TOASTS) {
         return next.slice(next.length - MAX_TOASTS);
       }
@@ -123,17 +136,19 @@ function App() {
     });
   };
 
-  // Remove a specific toast from the stack
+  // Remove a specific toast, either on auto-dismiss or after Undo
   const removeToast = (id: string) => {
     setToasts(current => current.filter(t => t.id !== id));
   };
 
-  // Main entry point called by any Water button in the UI
+  // Called by every Water button in the app
+  // Routes through the re-water confirmation when needed
   const logWatering = (plantId: string) => {
     const plant = plants.find(p => p.id === plantId);
     if (!plant) return;
 
-    // If the plant is healthy and was just watered, ask first
+    // If the plant is healthy and was watered recently, ask first
+    // This protects against accidental double watering, which the scenario flagged as the biggest cause of plant death
     if (wateredRecently(plant)) {
       setConfirm({
         plantName: plant.name,
@@ -146,113 +161,130 @@ function App() {
       return;
     }
 
-    // Otherwise water immediately
+    // Otherwise water straight away
     const snapshot = performWatering(plantId);
     if (snapshot) pushToast(plant.name, snapshot);
   };
 
+  // Add a brand new plant to the collection from the Add Plant form
+  // Starts healthy and watered today
   const addPlant = (formData: PlantFormData) => {
-  const today = new Date();
-  const next = new Date(today);
-  next.setDate(next.getDate() + formData.waterFrequency);
+    const today = new Date();
+    const next = new Date(today);
+    next.setDate(next.getDate() + formData.waterFrequency);
 
-  const newPlant: Plant = {
-    ...formData,
-    id: crypto.randomUUID(),
-    health: 'healthy',
-    lastWatered: today.toISOString().split('T')[0],
-    nextWatering: next.toISOString().split('T')[0],
-    waterIntervalDays: formData.waterFrequency,
+    const newPlant: Plant = {
+      ...formData,
+      id: crypto.randomUUID(),
+      health: 'healthy',
+      lastWatered: today.toISOString().split('T')[0],
+      nextWatering: next.toISOString().split('T')[0],
+      waterIntervalDays: formData.waterFrequency,
+    };
+
+    setPlants(prev => [...prev, newPlant]);
+
+    // Return the user to wherever they came from before opening Add Plant
+    setCurrentPage(previousPage as 'dashboard' | 'allPlants');
   };
 
-  setPlants(prev => [...prev, newPlant]);
-  setCurrentPage(previousPage as 'dashboard' | 'allPlants');
-};
+  // Switch screens from the sidebar
+  const navigateTo = (page: string) => {
+    if (page === 'dashboard' || page === 'allPlants' || page === 'addPlant') {
+      setPreviousPage(page);
+      setCurrentPage(page);
+      setSelectedPlantId(null);
+    }
+  };
 
-const navigateTo = (page: string) => {
-  if (page === 'dashboard' || page === 'allPlants' || page === 'addPlant') {
-    setPreviousPage(page);
-    setCurrentPage(page);
-    setSelectedPlantId(null);
+  // Open the details view for a specific plant
+  // Remembers where the user came from so the back button can label itself correctly
+  const handleViewPlant = (plantId: string) => {
+    setSelectedPlantId(plantId);
+    setPlantDetailsSource(currentPage as 'dashboard' | 'allPlants');
+    setCurrentPage('plantDetails');
+  };
+
+  // Render the correct screen based on currentPage
+
+  if (currentPage === 'addPlant') {
+    return (
+      <AddPlant
+        owners={Array.from(new Set(plants.map(p => p.owner))).sort()}
+        onAdd={addPlant}
+        onCancel={() => setCurrentPage(previousPage as 'dashboard' | 'allPlants')}
+        currentPage={currentPage}
+        onNavigate={navigateTo}
+      />
+    );
   }
-};
 
-const handleViewPlant = (plantId: string) => {
-  setSelectedPlantId(plantId);
-  setPlantDetailsSource(currentPage as 'dashboard' | 'allPlants');
-  setCurrentPage('plantDetails');
-};
+  if (currentPage === 'allPlants') {
+    return (
+      <>
+        <AllPlants
+          plants={plants}
+          onWater={logWatering}
+          onAddPlant={() => { setPreviousPage('allPlants'); setCurrentPage('addPlant'); }}
+          onViewPlant={handleViewPlant}
+          onNavigate={navigateTo}
+        />
+        <ToastStack toasts={toasts} onDismiss={removeToast} />
+        {confirm && (
+          <ConfirmDialog
+            plantName={confirm.plantName}
+            onConfirm={confirm.onConfirm}
+            onCancel={() => setConfirm(null)}
+          />
+        )}
+      </>
+    );
+  }
 
-if (currentPage === 'addPlant') {
-  return (
-    <AddPlant
-      owners={Array.from(new Set(plants.map(p => p.owner))).sort()}
-      onAdd={addPlant}
-      onCancel={() => setCurrentPage(previousPage as 'dashboard' | 'allPlants')}
-      currentPage={currentPage}        // add this
-      onNavigate={navigateTo}          // add this
-    />
-  );
-}
+  if (currentPage === 'plantDetails' && selectedPlantId) {
+    const plant = plants.find(p => p.id === selectedPlantId);
+    // Selected plant no longer exists, fall back to the list
+    if (!plant) {
+      setCurrentPage('allPlants');
+      return null;
+    }
 
-if (currentPage === 'allPlants') {
+    return (
+      <>
+        <PlantDetails
+          plant={plant}
+          onWater={logWatering}
+          sourcePage={plantDetailsSource}
+          onBack={() => setCurrentPage(plantDetailsSource)}
+          onNavigate={navigateTo}
+        />
+        <ToastStack toasts={toasts} onDismiss={removeToast} />
+        {confirm && (
+          <ConfirmDialog
+            plantName={confirm.plantName}
+            onConfirm={confirm.onConfirm}
+            onCancel={() => setConfirm(null)}
+          />
+        )}
+      </>
+    );
+  }
+
+  // Default screen is the Dashboard
   return (
     <>
-      <AllPlants
+      <Dashboard
         plants={plants}
         onWater={logWatering}
-        onAddPlant={() => { setPreviousPage('allPlants'); setCurrentPage('addPlant'); }}
+        onAddPlant={() => setCurrentPage('addPlant')}
         onViewPlant={handleViewPlant}
         onNavigate={navigateTo}
       />
-      <ToastStack toasts={toasts} onDismiss={removeToast} />
-      {confirm && (
-        <ConfirmDialog
-          plantName={confirm.plantName}
-          onConfirm={confirm.onConfirm}
-          onCancel={() => setConfirm(null)}
-        />
-      )}
-    </>
-  );
-}
 
-if (currentPage === 'plantDetails' && selectedPlantId) {
-  const plant = plants.find(p => p.id === selectedPlantId);
-  if (!plant) {
-    setCurrentPage('allPlants');
-    return null;
-  }
-
-  return (
-    <>
-      <PlantDetails
-        plant={plant}
-        onWater={logWatering}
-        sourcePage={plantDetailsSource}
-        onBack={() => setCurrentPage(plantDetailsSource)}
-        onNavigate={navigateTo}
-      />
-      <ToastStack toasts={toasts} onDismiss={removeToast} />
-      {confirm && (
-        <ConfirmDialog
-          plantName={confirm.plantName}
-          onConfirm={confirm.onConfirm}
-          onCancel={() => setConfirm(null)}
-        />
-      )}
-    </>
-  );
-}
-
-  return (
-    <>
-      <Dashboard plants={plants} onWater={logWatering} onAddPlant={() => setCurrentPage('addPlant')} onViewPlant={handleViewPlant} onNavigate={navigateTo} />
-
-      {/* Toast stack in the bottom right */}
+      {/* Toast stack in the bottom right corner */}
       <ToastStack toasts={toasts} onDismiss={removeToast} />
 
-      {/* Confirmation dialog */}
+      {/* Re-water confirmation dialog */}
       {confirm && (
         <ConfirmDialog
           plantName={confirm.plantName}

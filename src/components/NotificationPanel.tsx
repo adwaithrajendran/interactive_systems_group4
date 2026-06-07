@@ -1,5 +1,5 @@
-// Notification panel that opens when the bell is clicked
-// Shows plants that need attention and lets the user water them from here
+// Notification panel that opens when the bell in the top navbar is clicked
+// Lists plants needing attention and offers a Water button per row
 
 import type { Reminder } from '../types';
 
@@ -16,7 +16,8 @@ export default function NotificationPanel({
   onViewPlant,
   onClose,
 }: NotificationPanelProps) {
-  // Sort so overdue items come first, then due today
+  // Sort so overdue plants come first, then plants due today
+  // The user's most urgent items should always be at the top
   const sortedReminders = [...reminders].sort((a, b) => {
     if (a.status === 'overdue' && b.status !== 'overdue') return -1;
     if (b.status === 'overdue' && a.status !== 'overdue') return 1;
@@ -25,15 +26,15 @@ export default function NotificationPanel({
 
   return (
     <>
-      {/* Backdrop that closes the panel when clicked */}
+      {/* Invisible backdrop that closes the panel when clicked outside */}
       <div
         className="fixed inset-0 z-40"
         onClick={onClose}
       />
 
-      {/* The panel itself */}
+      {/* The panel itself, positioned below the bell */}
       <div className="absolute right-0 top-full mt-2 w-96 bg-surface-800 border border-surface-700 rounded-xl shadow-2xl z-50 overflow-hidden">
-        {/* Panel header */}
+        {/* Panel header with title and close button */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-surface-700">
           <div>
             <h3 className="text-base font-semibold text-white">Notifications</h3>
@@ -65,7 +66,7 @@ export default function NotificationPanel({
           </button>
         </div>
 
-        {/* Empty state */}
+        {/* Empty state, nothing needs water */}
         {reminders.length === 0 && (
           <div className="px-4 py-8 text-center">
             <div className="text-4xl mb-2">✓</div>
@@ -76,7 +77,7 @@ export default function NotificationPanel({
           </div>
         )}
 
-        {/* List of notifications */}
+        {/* List of notification rows */}
         {reminders.length > 0 && (
           <div className="max-h-96 overflow-y-auto">
             {sortedReminders.map(reminder => {
@@ -91,10 +92,10 @@ export default function NotificationPanel({
                   onClick={() => onViewPlant?.(reminder.plantId)}
                   className={`flex items-center gap-3 px-4 py-3 hover:bg-surface-700/50 transition-colors border-b border-surface-700/50 last:border-b-0 ${onViewPlant ? 'cursor-pointer' : ''}`}
                 >
-                  {/* Status indicator */}
+                  {/* Coloured dot showing severity */}
                   <div className={`w-2 h-2 rounded-full ${iconColor} shrink-0`} />
 
-                  {/* Plant info */}
+                  {/* Plant name, owner, and due label */}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-sm font-semibold text-white truncate">
@@ -107,7 +108,7 @@ export default function NotificationPanel({
                     <p className={`text-xs ${dueColor} mt-0.5`}>{dueText}</p>
                   </div>
 
-                  {/* Quick Water button */}
+                  {/* Quick water button, stopPropagation so the row click does not also open Plant Details */}
                   <button
                     onClick={(e) => { e.stopPropagation(); onWater(reminder.plantId); }}
                     className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors shrink-0"
@@ -120,7 +121,7 @@ export default function NotificationPanel({
           </div>
         )}
 
-        {/* Footer */}
+        {/* Footer hint, only shown when the list has items */}
         {reminders.length > 0 && (
           <div className="px-4 py-2 border-t border-surface-700 bg-surface-900/50">
             <p className="text-xs text-gray-400 text-center">

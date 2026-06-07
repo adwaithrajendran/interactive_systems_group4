@@ -1,4 +1,5 @@
-// Plants sorted alphabetically by name
+// Plants in a single flat list, sorted alphabetically by name
+// Used when the dashboard sort mode is set to "Name", and during search
 
 import PlantCard from './PlantCard';
 import type { Plant } from '../types';
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export default function PlantsByName({ plants, onWater, onClick }: Props) {
+  // Sort alphabetically, leaving the original array untouched
   const sorted = [...plants].sort((a, b) => a.name.localeCompare(b.name));
 
   return (

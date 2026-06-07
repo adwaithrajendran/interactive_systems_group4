@@ -1,6 +1,7 @@
 // Main dashboard screen
-// Default view shows greeting, summary and plants. Search mode hides everything
-// except the search banner and results so the user can focus on finding plants.
+// Default view shows the greeting, summary, and plant list
+// When the user is searching, the greeting and summary hide
+// so the search results take focus
 
 import { useState } from 'react';
 import Sidebar from './Sidebar';
@@ -23,7 +24,7 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, onNavigate }: DashboardProps) {
-  // Sort mode for the plants section
+  // Sort mode for the Your Plants section
   const [sortMode, setSortMode] = useState<SortMode>('location');
 
   // Optional owner filter, null means show everyone
@@ -35,7 +36,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
   // True when the user is actively searching
   const isSearching = searchQuery.trim().length > 0;
 
-  // Apply owner filter then search filter on top
+  // Apply the owner filter first, then the search filter on top
   const visiblePlants = plants
     .filter(p => (ownerFilter ? p.owner === ownerFilter : true))
     .filter(p => {
@@ -53,7 +54,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
   const healthyCount = visiblePlants.filter(p => p.health === 'healthy').length;
   const needsWaterCount = visiblePlants.filter(p => p.health !== 'healthy').length;
 
-  // Water Today list for the main panel
+  // Water Today list, follows the filters above
   const waterTodayList: Reminder[] = visiblePlants
     .filter(p => p.health !== 'healthy')
     .map(p => ({
@@ -66,8 +67,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
       owner: p.owner,
     }));
 
-  // Notification bell uses the unfiltered list so it stays accurate
-  // regardless of what the user has filtered down to
+  // Notification bell uses the unfiltered list so it always reflects the whole household
   const allReminders: Reminder[] = plants
     .filter(p => p.health !== 'healthy')
     .map(p => ({
@@ -80,7 +80,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
       owner: p.owner,
     }));
 
-  // Unique owners for the filter chips
+  // Unique owners, used to build the owner filter chips
   const owners = Array.from(new Set(plants.map(p => p.owner))).sort();
 
   // Greeting target follows the owner filter
@@ -95,7 +95,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
 
   return (
     <div className="min-h-screen bg-transparent">
-        <Sidebar items={navItems} currentPage="dashboard" onNavigate={onNavigate} onHomeClick={resetDashboard} />
+      <Sidebar items={navItems} currentPage="dashboard" onNavigate={onNavigate} onHomeClick={resetDashboard} />
 
       <div className="pl-52">
         <TopNavbar
@@ -107,7 +107,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
         />
 
         <main className="p-5 bg-surface-950/60 min-h-screen space-y-4">
-          {/* HEADER CARD: hidden entirely during search */}
+          {/* Header card, hidden during search */}
           {!isSearching && (
             <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-5">
               <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
@@ -121,7 +121,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
                       : 'All plants are looking good today.'}
                   </p>
                 </div>
-                
+
                 <div className="flex items-center gap-3">
                   <button
                     onClick={onAddPlant}
@@ -133,10 +133,10 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
                     </svg>
                     Add Plant
                   </button>
+                </div>
               </div>
-            </div>
 
-              {/* Enhanced owner filter with avatars and counts */}
+              {/* Owner filter chips with avatars and counts */}
               <div className="flex flex-wrap items-center gap-3">
                 <span className="text-sm text-gray-300 font-medium">Whose plants:</span>
 
@@ -179,6 +179,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
                   </span>
                 </button>
 
+                {/* ====== MIDPOINT MARKER ====== */}
                 {/* One chip per owner */}
                 {owners.map(owner => {
                   const ownerCount = plants.filter(p => p.owner === owner).length;
@@ -214,7 +215,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
             </section>
           )}
 
-          {/* SEARCH BANNER: shown only during search, replaces the header card */}
+          {/* Search banner, shown only during search, replaces the header card */}
           {isSearching && (
             <div className="flex items-center justify-between flex-wrap gap-3 px-2">
               <div className="text-base text-emerald-200 inline-flex items-center gap-2">
@@ -235,7 +236,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
             </div>
           )}
 
-          {/* SUMMARY CARD: hidden during search */}
+          {/* Summary card, hidden during search */}
           {!isSearching && (
             <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-5">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -250,7 +251,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
             </section>
           )}
 
-          {/* PLANTS CARD: always visible, this is the focus during search */}
+          {/* Plants card, always visible. Becomes the focus during search */}
           <section className="bg-surface-900/70 border border-surface-700 rounded-2xl p-5">
             <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
               <h2 className="text-2xl font-bold text-white">
@@ -278,7 +279,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
               )}
             </div>
 
-            {/* Empty state when search finds nothing */}
+            {/* Empty state when the search has no matches */}
             {visiblePlants.length === 0 && (
               <div className="py-12 text-center">
                 <p className="text-base text-gray-200">No plants match your search</p>
@@ -293,7 +294,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
               <PlantsByName plants={visiblePlants} onWater={onWater} onClick={onViewPlant} />
             )}
 
-            {/* Otherwise show the user selected view */}
+            {/* Otherwise show the view the user has selected */}
             {visiblePlants.length > 0 && !isSearching && sortMode === 'location' && (
               <PlantsByLocation plants={visiblePlants} onWater={onWater} onClick={onViewPlant} />
             )}
@@ -310,7 +311,7 @@ export default function Dashboard({ plants, onWater, onAddPlant, onViewPlant, on
   );
 }
 
-// Sort toggle button
+// Sort toggle button used in the Your Plants header
 function SortButton({
   label,
   active,

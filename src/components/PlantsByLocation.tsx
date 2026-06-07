@@ -1,4 +1,6 @@
 // Plants grouped by their room
+// Used when the dashboard sort mode is set to "Location"
+// Location-first order surfaces forgotten rooms like the hallway
 
 import PlantCard from './PlantCard';
 import type { Plant } from '../types';
@@ -10,12 +12,14 @@ interface Props {
 }
 
 export default function PlantsByLocation({ plants, onWater, onClick }: Props) {
+  // Group plants into buckets keyed by room
   const grouped = plants.reduce<Record<string, Plant[]>>((acc, plant) => {
     if (!acc[plant.room]) acc[plant.room] = [];
     acc[plant.room].push(plant);
     return acc;
   }, {});
 
+  // Sort rooms alphabetically and plants alphabetically within each room
   const sortedRooms = Object.entries(grouped)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([room, roomPlants]) => [

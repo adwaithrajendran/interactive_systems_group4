@@ -1,8 +1,10 @@
-// A single plant card used in all sort views
+// A single plant card used in all sort views on the dashboard
+// Shows the plant's name, owner, species, room, due status, and a Water button
 
 import type { Plant, HealthStatus } from '../types';
 import { dueLabel } from '../utils/plantStatus';
 
+// Style and label for the status pill at the top right of the card
 const statusPill: Record<HealthStatus, { bg: string; text: string; label: string }> = {
   healthy: { bg: 'bg-emerald-600', text: 'text-white', label: 'Ok' },
   warning: { bg: 'bg-amber-400', text: 'text-white', label: 'Due Soon' },
@@ -18,6 +20,8 @@ interface PlantCardProps {
 export default function PlantCard({ plant, onWater, onClick }: PlantCardProps) {
   const pill = statusPill[plant.health];
 
+  // Clicking anywhere on the card opens Plant Details
+  // Only attached when an onClick handler is passed in
   const handleClick = () => {
     if (onClick) onClick(plant.id);
   };
@@ -52,6 +56,7 @@ export default function PlantCard({ plant, onWater, onClick }: PlantCardProps) {
       </div>
 
       {/* Full width Water button */}
+      {/* stopPropagation stops the card click handler from firing as well */}
       <button
         onClick={(e) => { e.stopPropagation(); onWater(plant.id); }}
         className="w-full py-2 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 hover:text-emerald-200 text-sm font-semibold transition-colors flex items-center justify-center gap-2"

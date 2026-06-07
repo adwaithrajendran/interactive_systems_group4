@@ -1,9 +1,10 @@
 // Helper functions for plant status and timing
+// These are pure functions, no React state, so any component can use them
 
 import type { Plant, ReminderStatus } from '../types';
 
 // How many days until this plant needs water next
-// Negative numbers mean the plant is overdue
+// Negative numbers mean the plant is already overdue
 export function daysUntilNextWatering(plant: Plant): number {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -13,6 +14,7 @@ export function daysUntilNextWatering(plant: Plant): number {
 }
 
 // Friendly label for how long ago this plant was watered
+// Used on plant cards and in the Plant Details header
 export function lastWateredLabel(plant: Plant): string {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -24,7 +26,8 @@ export function lastWateredLabel(plant: Plant): string {
   return `watered ${days} days ago`;
 }
 
-// Friendly label for the next watering due date, used on cards
+// Friendly label for when the plant is next due for water
+// Used on plant cards
 export function dueLabel(plant: Plant): string {
   const daysUntil = daysUntilNextWatering(plant);
   if (daysUntil < 0) return `${Math.abs(daysUntil)} day${Math.abs(daysUntil) === 1 ? '' : 's'} overdue`;
@@ -33,7 +36,8 @@ export function dueLabel(plant: Plant): string {
   return `due in ${daysUntil} days`;
 }
 
-// Translate a plant's health into a reminder bucket for the Water Today list
+// Translate a plant's health into a reminder bucket
+// Used by the Water Today panel to sort what is most urgent
 export function reminderBucket(plant: Plant): ReminderStatus {
   if (plant.health === 'critical') return 'overdue';
   if (plant.health === 'warning') return 'today';
@@ -41,6 +45,7 @@ export function reminderBucket(plant: Plant): ReminderStatus {
 }
 
 // Was this plant watered today
+// Used to decide whether the Water button needs a confirmation step
 export function isWateredToday(plant: Plant): boolean {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
